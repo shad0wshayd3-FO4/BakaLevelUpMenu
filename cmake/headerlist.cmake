@@ -1,6 +1,7 @@
 set(headers ${headers}
 	src/PCH.h
 	src/Settings.h
+	src/Forms/Forms.h
 	src/Forms/PerkManager.h
 	src/Menus/Menus.h
 	src/Menus/BlurMenu/BlurMenu.h
