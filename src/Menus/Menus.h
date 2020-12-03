@@ -1,21 +1,21 @@
 #pragma once
 
-#include "Menus/BlurMenu/BlurMenu.h"
 #include "Menus/HUDMenuEx/HUDMenuEx.h"
-#include "Menus/LevelUpMenuEx/LevelUpMenuEx.h"
+#include "Menus/LevelUpMenu/LevelUpMenu.h"
+#include "Menus/PipboyMenu/PipboyManager.h"
 
 namespace Menus
 {
 	void InstallHooks()
 	{
-		LevelUpMenuEx::Install();
+		LevelUpMenu::Install();
+		PipboyManager::Install();
 	}
 
 	void Register()
 	{
 		if (const auto UI = RE::UI::GetSingleton(); UI)
 		{
-			UI->RegisterMenu("BlurMenu", Menus::BlurMenu::Create);
 			// UI->RegisterMenu("HUDMenuEx", Menus::HUDMenuEx::Create);
 		}
 	}

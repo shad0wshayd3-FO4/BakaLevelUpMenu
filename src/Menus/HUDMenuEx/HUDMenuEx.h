@@ -36,7 +36,7 @@ namespace Menus
 			auto PlayerRef = RE::PlayerCharacter::GetSingleton();
 			if (PlayerRef)
 			{
-				const auto showPowerArmorHUD = RE::PowerArmor::QActorInPowerArmor(*PlayerRef);
+				const auto showPowerArmorHUD = RE::PowerArmor::PlayerInPowerArmor();
 				SetFusionCoreMeterVisible(showPowerArmorHUD);
 
 				if (showPowerArmorHUD)

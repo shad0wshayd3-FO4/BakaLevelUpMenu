@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Forms/PerkManager.h"
+#include "PerkManager.h"
 
 void PlayMenuSound(const char* a_soundName)
 {
@@ -11,7 +10,7 @@ void PlayMenuSound(const char* a_soundName)
 
 namespace Menus
 {
-	class LevelUpMenuEx :
+	class LevelUpMenu :
 		public RE::GameMenuBase
 	{
 	public:
@@ -27,7 +26,12 @@ namespace Menus
 			trampoline.write_branch<6>(targetTrig.address(), LevelUpMenu__Trigger);
 		}
 
-		LevelUpMenuEx()
+		static void ShowMenu(bool a_fromPipboy)
+		{
+			LevelUpMenu__ShowMenu(a_fromPipboy);
+		}
+
+		LevelUpMenu()
 		{
 			menuFlags.set(
 				RE::UI_MENU_FLAGS::kPausesGame,
@@ -62,7 +66,7 @@ namespace Menus
 			SetUpButtonBar(*FilterHolder_mc, "ButtonHintBar_mc", RE::HUDColorTypes::kGameplayHUDColor);
 		}
 
-		~LevelUpMenuEx()
+		~LevelUpMenu()
 		{
 			Background_mc.release();
 		}
@@ -138,6 +142,12 @@ namespace Menus
 					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenu);
 					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenuPrevNext);
 					RE::SendHUDMessage::PushHUDMode("SpecialMode");
+
+					auto PipboyManager = RE::PipboyManager::GetSingleton();
+					if (PipboyManager)
+					{
+						PipboyManager->LowerPipboy(RE::PipboyManager::LOWER_REASON::kPerkGrid);
+					}
 
 					return RE::UI_MESSAGE_RESULTS::kPassOn;
 				}
@@ -263,7 +273,7 @@ namespace Menus
 				stl::report_and_fail("LevelUpMenu override failed!");
 			}
 
-			UI->RegisterMenu("LevelUpMenu", LevelUpMenuEx::Create);
+			UI->RegisterMenu("LevelUpMenu", LevelUpMenu::Create);
 		}
 
 		static void LevelUpMenu__ShowMenu(bool a_fromPipboy)
@@ -278,12 +288,12 @@ namespace Menus
 
 		static void LevelUpMenu__Trigger(void*)
 		{
-			LevelUpMenuEx::IsNewLevel = true;
+			LevelUpMenu::IsNewLevel = true;
 		}
 
 		static RE::IMenu* Create(const RE::UIMessage&)
 		{
-			return new LevelUpMenuEx();
+			return new LevelUpMenu();
 		}
 	};
 }

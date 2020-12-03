@@ -91,7 +91,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* a_F
 {
 	// Initialize F4SE
 	F4SE::Init(a_F4SE);
-	F4SE::AllocTrampoline(1 << 6);
+	F4SE::AllocTrampoline(1 << 7);
 
 	// Register Messaging Interface Listeners
 	const auto messaging = F4SE::GetMessagingInterface();
