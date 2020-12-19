@@ -1,13 +1,6 @@
 #pragma once
 #include "PerkManager.h"
 
-void PlayMenuSound(const char* a_soundName)
-{
-	using func_t = decltype(&PlayMenuSound);
-	REL::Relocation<func_t> func{ REL::ID(1227993) };
-	return func(a_soundName);
-}
-
 namespace Menus
 {
 	class LevelUpMenu :
@@ -35,6 +28,7 @@ namespace Menus
 		{
 			menuFlags.set(
 				RE::UI_MENU_FLAGS::kPausesGame,
+				RE::UI_MENU_FLAGS::kAlwaysOpen,
 				RE::UI_MENU_FLAGS::kUsesCursor,
 				RE::UI_MENU_FLAGS::kDisablePauseMenu,
 				RE::UI_MENU_FLAGS::kUpdateUsesCursor,
@@ -87,18 +81,22 @@ namespace Menus
 				break;
 
 			case 2:
-				InitPerkList();
+				NotifyLoaded();
 				break;
 
 			case 3:
-				GetPerkCount();
+				InitPerkList();
 				break;
 
 			case 4:
-				GetHeaderText();
+				GetPerkCount();
 				break;
 
 			case 5:
+				GetHeaderText();
+				break;
+
+			case 6:
 				if ((a_params.argCount == 1) && (a_params.args[0].IsBoolean()))
 				{
 					auto ControlMap = RE::ControlMap::GetSingleton();
@@ -106,7 +104,7 @@ namespace Menus
 				}
 				break;
 
-			case 6:
+			case 7:
 				if ((a_params.argCount == 1) && (a_params.args[0].IsUInt()))
 				{
 					auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
@@ -123,11 +121,12 @@ namespace Menus
 		{
 			MapCodeMethodToASFunction("CloseMenu", 0);
 			MapCodeMethodToASFunction("PlaySound", 1);
-			MapCodeMethodToASFunction("InitPerkList", 2);
-			MapCodeMethodToASFunction("GetPerkCount", 3);
-			MapCodeMethodToASFunction("UpdateHeader", 4);
-			MapCodeMethodToASFunction("SetTextEntry", 5);
-			MapCodeMethodToASFunction("AddPerk", 6);
+			MapCodeMethodToASFunction("NotifyLoaded", 2);
+			MapCodeMethodToASFunction("InitPerkList", 3);
+			MapCodeMethodToASFunction("GetPerkCount", 4);
+			MapCodeMethodToASFunction("UpdateHeader", 5);
+			MapCodeMethodToASFunction("SetTextEntry", 6);
+			MapCodeMethodToASFunction("AddPerk", 7);
 		}
 
 		virtual RE::UI_MESSAGE_RESULTS ProcessMessage(RE::UIMessage& a_message) override
@@ -139,14 +138,22 @@ namespace Menus
 					auto ControlMap = RE::ControlMap::GetSingleton();
 					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
 					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenu);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenuPrevNext);
+					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
+					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
 					RE::SendHUDMessage::PushHUDMode("SpecialMode");
 
-					auto PipboyManager = RE::PipboyManager::GetSingleton();
-					if (PipboyManager)
+					if (LevelUpMenu::FromPipboy)
 					{
-						PipboyManager->LowerPipboy(RE::PipboyManager::LOWER_REASON::kPerkGrid);
+						if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+						{
+							PipboyManager->LowerPipboy(RE::PipboyManager::LOWER_REASON::kPerkGrid);
+						}
+					}
+
+					if (LevelUpMenu::IsLoaded)
+					{
+						NotifyLoaded();
 					}
 
 					return RE::UI_MESSAGE_RESULTS::kPassOn;
@@ -157,16 +164,20 @@ namespace Menus
 					auto ControlMap = RE::ControlMap::GetSingleton();
 					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
 					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenu);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelupMenuPrevNext);
+					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
+					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
 					RE::SendHUDMessage::PopHUDMode("SpecialMode");
 
-					auto PipboyManager = RE::PipboyManager::GetSingleton();
-					if (PipboyManager)
+					if (LevelUpMenu::FromPipboy)
 					{
-						PipboyManager->RaisePipboy();
+						if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+						{
+							PipboyManager->RaisePipboy();
+						}
 					}
 
+					LevelUpMenu::FromPipboy = false;
 					return RE::UI_MESSAGE_RESULTS::kPassOn;
 				}
 
@@ -186,14 +197,14 @@ namespace Menus
 			}
 		}
 
+		void NotifyLoaded()
+		{
+			LevelUpMenu::IsLoaded = true;
+			menuObj.Invoke("RefreshDisplay");
+		}
+
 		void InitPerkList()
 		{
-			if (!uiMovie)
-			{
-				logger::error("uiMovie null.");
-				return;
-			}
-
 			RE::Scaleform::GFx::Value PerkList[1];
 			uiMovie->CreateArray(&PerkList[0]);
 
@@ -259,10 +270,11 @@ namespace Menus
 			}
 		}
 
-	private:
 		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> Background_mc;
 		static inline std::string HeaderText;
+		static inline bool FromPipboy{ false };
 		static inline bool IsNewLevel{ false };
+		static inline bool IsLoaded{ false };
 
 	private:
 		static void LevelUpMenu__Init()
@@ -279,10 +291,15 @@ namespace Menus
 		static void LevelUpMenu__ShowMenu(bool a_fromPipboy)
 		{
 			const auto UI = RE::UI::GetSingleton();
-			if (a_fromPipboy ||
-				((!UI->menuMode) && (!UI->GetMenu("WorkshopMenu")) && (RE::VATS::GetSingleton()->mode == RE::VATS::VATS_MODE_ENUM::kNone)))
+			if (a_fromPipboy || ((!UI->menuMode) && (!UI->GetMenu("WorkshopMenu")) && (RE::VATS::GetSingleton()->mode == RE::VATS::VATS_MODE_ENUM::kNone)))
 			{
-				RE::BSUIMessageData::SendUIBoolMessage("LevelUpMenu", RE::UI_MESSAGE_TYPE::kShow, a_fromPipboy);
+				auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
+				if (UIMessageQueue)
+				{
+					LevelUpMenu::FromPipboy = a_fromPipboy;
+					UIMessageQueue->AddMessage(
+						"LevelUpMenu", RE::UI_MESSAGE_TYPE::kShow);
+				}
 			}
 		}
 

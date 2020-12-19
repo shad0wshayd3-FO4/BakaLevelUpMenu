@@ -75,7 +75,7 @@ namespace Menus
 				RE::Scaleform::GFx::Value args[1];
 				args[0] = a_value;
 				FusionCoreMeter_mc->Invoke("SetPercent", nullptr, args, 1);
-				FusionCoreMeter_mc->SetHostile(a_value <= 20.0);
+				FusionCoreMeter_mc->SetToHUDColor(a_value <= 20.0);
 			}
 		}
 
