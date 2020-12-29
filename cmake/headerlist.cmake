@@ -7,4 +7,7 @@ set(headers ${headers}
 	src/Menus/LevelUpMenu/LevelUpMenu.h
 	src/Menus/LevelUpMenu/PerkManager.h
 	src/Menus/PipboyMenu/PipboyManager.h
+	src/Menus/PluginExplorerMenu/PluginExplorer.h
+	src/Menus/PluginExplorerMenu/PluginExplorerMenu.h
+	src/Menus/Scaleform/Log.h
 )

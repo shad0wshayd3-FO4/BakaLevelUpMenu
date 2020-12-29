@@ -270,7 +270,7 @@ namespace Menus
 			}
 		}
 
-		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> Background_mc;
+		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> Background_mc{ nullptr };
 		static inline std::string HeaderText;
 		static inline bool FromPipboy{ false };
 		static inline bool IsNewLevel{ false };

@@ -6,14 +6,16 @@ private:
 	static std::uint32_t HookInitializer_DefaultObject()
 	{
 		// Initializer override
-		// DefaultPreviewTransform_DO =
-		// 	RE::DefaultObjectFormFactory::Create(
-		// 		"DefaultPreviewTransform_DO",
-		// 		"This transform is the one used for preview on all forms which do not have a hand tagged transform.",
-		// 		RE::ENUM_FORM_ID::kTRNS);
+		AmmoWornKeyword_DO =
+			RE::DefaultObjectFormFactory::Create(
+				"AmmoWornKeyword_DO",
+				"This ammo is worn on the actors body.",
+				RE::ENUM_FORM_ID::kKYWD);
 
-		// Add new
-		// TODO
+		LooseModKeyword_DO =
+			RE::DefaultObjectFormFactory::Create(
+				"LooseModKeyword_DO",
+				RE::ENUM_FORM_ID::kKYWD);
 
 		return 1;
 	}
@@ -48,16 +50,16 @@ private:
 
 	// members
 	inline static RE::Setting fBlockPowerAttackMult{ "fBlockPowerAttackMult", 0.75f };
-	// inline static RE::BGSDefaultObject* DefaultPreviewTransform_DO{ nullptr };
+	inline static RE::BGSDefaultObject* AmmoWornKeyword_DO{ nullptr };
 
 public:
 	static void InstallHooks()
 	{
-		// REL::Relocation<std::uintptr_t> target_DefaultObject{ REL::ID(1389727) };
+		REL::Relocation<std::uintptr_t> target_DefaultObject{ REL::ID(1359842) };
 		REL::Relocation<std::uintptr_t> target_Setting{ REL::ID(984976) };
 
 		auto& trampoline = F4SE::GetTrampoline();
-		// trampoline.write_branch<6>(target_DefaultObject.address(), HookInitializer_DefaultObject);
+		trampoline.write_branch<6>(target_DefaultObject.address(), HookInitializer_DefaultObject);
 		trampoline.write_branch<5>(target_Setting.address(), HookInitializer_Setting);
 	}
 
@@ -75,4 +77,6 @@ public:
 	inline static RE::Setting sBakaRanks{ "sBakaRanks", "Ranks: {:d}" };
 	inline static RE::Setting sBakaLevelUpText{ "sBakaLevelUpText", "Welcome to Level {:d}" };
 	inline static RE::Setting sBakaPerkMenu{ "sBakaPerkMenu", "Perk Menu" };
+
+	inline static RE::BGSDefaultObject* LooseModKeyword_DO{ nullptr };
 };

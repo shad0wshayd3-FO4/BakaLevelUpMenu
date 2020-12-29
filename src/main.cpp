@@ -17,10 +17,16 @@ void F4SEMessageHandler(F4SE::MessagingInterface::Message* a_msg)
 
 				// Register Menus
 				Menus::Register();
+
+				// Initialize PluginExplorer data
+				Menus::PluginExplorer::Initialize();
 			}
 			else
 			{
 				logger::debug("GameDataReady - Unloaded"sv);
+
+				// Reset PluginExplorer daa
+				Menus::PluginExplorer::Reset();
 			}
 
 			break;
