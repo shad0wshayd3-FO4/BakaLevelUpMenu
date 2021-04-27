@@ -1,7 +1,7 @@
 {
   "name": "bakainterface",
-  "version-string": "1.0.0",
-  "description": "F4SE plugin template using CommonLibF4.",
+  "version-string": "2.0.0",
+  "description": "F4SE plugin using CommonLibF4.",
   "homepage": "https://github.com/shad0wshayd3/BakaInterface",
   "license": "MIT",
   "dependencies": [
@@ -9,7 +9,6 @@
     "boost-iostreams",
     "boost-iterator",
     "boost-stl-interfaces",
-    "span-lite",
     "spdlog",
     "tomlplusplus"
   ]

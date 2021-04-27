@@ -25,7 +25,7 @@ void F4SEMessageHandler(F4SE::MessagingInterface::Message* a_msg)
 			{
 				logger::debug("GameDataReady - Unloaded"sv);
 
-				// Reset PluginExplorer daa
+				// Reset PluginExplorer data
 				Menus::PluginExplorer::Reset();
 			}
 

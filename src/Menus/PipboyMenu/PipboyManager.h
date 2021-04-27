@@ -34,7 +34,7 @@ namespace Menus
 
 			case RE::PipboyManager::LOWER_REASON::kPerkGrid:
 				{
-					auto PlayerControls = RE::PlayerControls::GetSingleton(); 
+					auto PlayerControls = RE::PlayerControls::GetSingleton();
 					PlayerControls->DoAction(RE::DEFAULT_OBJECT::kActionPipboyInspect, RE::ActionInput::ACTIONPRIORITY::kTry);
 					LevelUpMenu::ShowMenu(true);
 					break;
@@ -56,7 +56,7 @@ namespace Menus
 				auto BSInputDeviceManager = RE::BSInputDeviceManager::GetSingleton();
 				auto PlayerInPowerArmor = RE::PowerArmor::PlayerInPowerArmor();
 
-				if (BSInputDeviceManager->UsingGamepad())
+				if (BSInputDeviceManager->IsGamepadConnected())
 				{
 					if (PlayerInPowerArmor)
 					{

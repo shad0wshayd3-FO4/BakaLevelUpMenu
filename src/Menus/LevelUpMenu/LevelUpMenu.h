@@ -36,6 +36,7 @@ namespace Menus
 				RE::UI_MENU_FLAGS::kUsesBlurredBackground,
 				RE::UI_MENU_FLAGS::kUsesMovementToDirection);
 
+			customRendererName = "FlatScreenModel";
 			depthPriority = 9;
 
 			const auto ScaleformManager = RE::BSScaleformManager::GetSingleton();
@@ -43,21 +44,23 @@ namespace Menus
 				ScaleformManager->LoadMovieEx(*this, "Interface/LevelUpMenu.swf", "root.Menu_mc");
 			assert(LoadMovieSuccess);
 
-			RE::BSGFxObject::make_unique_ptr(FilterHolder_mc, *uiMovie, "root.Menu_mc");
-			if (FilterHolder_mc)
+			RE::BSGFxObject::make_unique_ptr(filterHolder, *uiMovie, "root.Menu_mc");
+			if (filterHolder)
 			{
-				FilterHolder_mc->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor);
-				shaderFXObjects.push_back(FilterHolder_mc.get());
+				filterHolder->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor);
+				shaderFXObjects.push_back(filterHolder.get());
+				logger::info("created filterHolder");
 			}
 
-			RE::BSGFxObject::make_unique_ptr(Background_mc, *FilterHolder_mc, "Background_mc");
+			RE::BSGFxObject::make_unique_ptr(Background_mc, *filterHolder, "Background_mc");
 			if (Background_mc)
 			{
 				Background_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(Background_mc.get());
+				logger::info("created Background");
 			}
 
-			SetUpButtonBar(*FilterHolder_mc, "ButtonHintBar_mc", RE::HUDColorTypes::kGameplayHUDColor);
+			SetUpButtonBar(*filterHolder, "ButtonHintBar_mc", RE::HUDColorTypes::kGameplayHUDColor);
 		}
 
 		~LevelUpMenu()

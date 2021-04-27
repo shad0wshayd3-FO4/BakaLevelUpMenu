@@ -10,4 +10,5 @@ set(headers ${headers}
 	src/Menus/PluginExplorerMenu/PluginExplorer.h
 	src/Menus/PluginExplorerMenu/PluginExplorerMenu.h
 	src/Menus/Scaleform/Log.h
+	src/Menus/Utils/Utils.h
 )

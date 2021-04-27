@@ -1,4 +1,6 @@
 #pragma once
+#include "Forms\Forms.h"
+#include "Menus\Utils\Utils.h"
 #include "PluginExplorer.h"
 
 namespace Menus
@@ -26,35 +28,35 @@ namespace Menus
 				ScaleformManager->LoadMovieEx(*this, "Interface/PluginExplorerMenu.swf", "root.Menu_mc");
 			assert(LoadMovieSuccess);
 
-			RE::BSGFxObject::make_unique_ptr(FilterHolder_mc, *uiMovie, "root.Menu_mc");
-			if (FilterHolder_mc)
+			RE::BSGFxObject::make_unique_ptr(filterHolder, *uiMovie, "root.Menu_mc");
+			if (filterHolder)
 			{
-				FilterHolder_mc->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor);
-				shaderFXObjects.push_back(FilterHolder_mc.get());
+				filterHolder->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor);
+				shaderFXObjects.push_back(filterHolder.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(LPaneBackground_mc, *FilterHolder_mc, "LeftPane_mc.Background_mc");
+			RE::BSGFxObject::make_unique_ptr(LPaneBackground_mc, *filterHolder, "LeftPane_mc.Background_mc");
 			if (LPaneBackground_mc)
 			{
 				LPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(LPaneBackground_mc.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(RPaneBackground_mc, *FilterHolder_mc, "RightPane_mc.Background_mc");
+			RE::BSGFxObject::make_unique_ptr(RPaneBackground_mc, *filterHolder, "RightPane_mc.Background_mc");
 			if (RPaneBackground_mc)
 			{
 				RPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(RPaneBackground_mc.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(TPaneBackground_mc, *FilterHolder_mc, "CategoryBar_mc.BackerBar_mc");
+			RE::BSGFxObject::make_unique_ptr(TPaneBackground_mc, *filterHolder, "CategoryBar_mc.BackerBar_mc");
 			if (TPaneBackground_mc)
 			{
 				TPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(TPaneBackground_mc.get());
 			}
 
-			SetUpButtonBar(*FilterHolder_mc, "ButtonHintBar_mc", RE::HUDColorTypes::kGameplayHUDColor);
+			SetUpButtonBar(*filterHolder, "ButtonHintBar_mc", RE::HUDColorTypes::kGameplayHUDColor);
 		}
 
 		virtual ~PluginExplorerMenu()
@@ -102,21 +104,7 @@ namespace Menus
 					if (form)
 					{
 						RE::Scaleform::GFx::Value ItemCardInfoList[1];
-						uiMovie->CreateArray(&ItemCardInfoList[0]);
-
-						switch (form->GetFormType())
-						{
-						case RE::ENUM_FORM_ID::kAMMO:
-							{
-								auto ammo = form->As<RE::TESAmmo>();
-								RE::InventoryUserUIUtils::AddBasicItemCardInfoEntry(ItemCardInfoList[0], "$val", ammo->value);
-								RE::InventoryUserUIUtils::AddBasicItemCardInfoEntry(ItemCardInfoList[0], "$wt", ammo->weight);
-							}
-							break;
-						default:
-							break;
-						}
-
+						Utils::PopulateItemCard(uiMovie, ItemCardInfoList[0], form);
 						menuObj.Invoke("onUpdateItemCardInfoList", nullptr, ItemCardInfoList, 1);
 					}
 				}
@@ -308,8 +296,8 @@ namespace Menus
 
 				std::string pluginIndex =
 					(iter.first >= 0xFE) ?
-                        fmt::format("[FE][{:03X}]", iter.first - 0xFE) :
-                        fmt::format("[{:02X}]", iter.first);
+						fmt::format("[FE][{:03X}]", iter.first - 0xFE) :
+						fmt::format("[{:02X}]", iter.first);
 
 				RE::Scaleform::GFx::Value listEntry;
 				uiMovie->CreateObject(&listEntry);

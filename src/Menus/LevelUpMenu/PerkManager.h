@@ -13,11 +13,11 @@ namespace Menus
 		public:
 			PerkCondition(RE::TESConditionItem* a_condition)
 			{
-				switch (a_condition->data.FunctionData.function)
+				switch (a_condition->data.FunctionData.function.get())
 				{
-				case RE::CONDITION_FUNCTIONS::kGetValue:
-				case RE::CONDITION_FUNCTIONS::kGetBaseValue:
-				case RE::CONDITION_FUNCTIONS::kGetPermanentValue:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
 					{
 						auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.FunctionData.param[0]);
 						if (!actorValue)
@@ -27,29 +27,29 @@ namespace Menus
 						}
 
 						auto compareValue = a_condition->GetComparisonValue();
-						switch (abs(a_condition->data.flags >> 5))
+						switch (a_condition->data.condition)
 						{
-						case RE::CONDITION_OPCODE::Equal:
+						case RE::ENUM_COMPARISON_CONDITION::kEqual:
 							_conditionText = fmt::format(Forms::sBakaEqual.GetString(),
 								actorValue->GetFullName(), compareValue);
 							break;
-						case RE::CONDITION_OPCODE::kNotEqual:
+						case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
 							_conditionText = fmt::format(Forms::sBakaNotEqual.GetString(),
 								actorValue->GetFullName(), compareValue);
 							break;
-						case RE::CONDITION_OPCODE::kGreaterThan:
+						case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
 							_conditionText = fmt::format(Forms::sBakaGreater.GetString(),
 								actorValue->GetFullName(), compareValue + 1.0F);
 							break;
-						case RE::CONDITION_OPCODE::kGreaterThanEqual:
+						case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
 							_conditionText = fmt::format(Forms::sBakaGreaterEqual.GetString(),
 								actorValue->GetFullName(), compareValue);
 							break;
-						case RE::CONDITION_OPCODE::kLessThan:
+						case RE::ENUM_COMPARISON_CONDITION::kLessThan:
 							_conditionText = fmt::format(Forms::sBakaLess.GetString(),
 								actorValue->GetFullName(), compareValue);
 							break;
-						case RE::CONDITION_OPCODE::kLessThanEqual:
+						case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
 							_conditionText = fmt::format(Forms::sBakaLessEqual.GetString(),
 								actorValue->GetFullName(), compareValue + 1.0F);
 							break;
@@ -62,8 +62,8 @@ namespace Menus
 						break;
 					}
 
-				case RE::CONDITION_FUNCTIONS::kGetIsSex:
-				case RE::CONDITION_FUNCTIONS::kGetGlobalValue:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_IS_SEX:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_GLOBAL_VALUE:
 					{
 						if (!a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr))
 						{
@@ -74,7 +74,7 @@ namespace Menus
 						break;
 					}
 
-				case RE::CONDITION_FUNCTIONS::kHasPerk:
+				case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
 					{
 						auto perk = static_cast<RE::BGSPerk*>(a_condition->data.FunctionData.param[0]);
 						if (!perk)
@@ -90,12 +90,12 @@ namespace Menus
 							break;
 						}
 
-						switch (a_condition->data.flags >> 5)
+						switch (a_condition->data.condition)
 						{
-						case RE::CONDITION_OPCODE::Equal:
+						case RE::ENUM_COMPARISON_CONDITION::kEqual:
 							_conditionText = fmt::format(Forms::sBakaHasPerk.GetString(), perk->GetFullName());
 							break;
-						case RE::CONDITION_OPCODE::kNotEqual:
+						case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
 							_conditionText = fmt::format(Forms::sBakaNotPerk.GetString(), perk->GetFullName());
 							break;
 						default:
@@ -111,7 +111,7 @@ namespace Menus
 					break;
 				}
 
-				_isOr = (a_condition->next && (a_condition->data.flags >> RE::CONDITION_FLAGS::kOr) & 1);
+				_isOr = (a_condition->next && a_condition->data.compareOr);
 			}
 
 			constexpr std::string_view GetConditionText() const noexcept { return { _conditionText.data(), _conditionText.size() }; }
