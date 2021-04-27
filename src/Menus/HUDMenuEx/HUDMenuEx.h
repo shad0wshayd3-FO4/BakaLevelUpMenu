@@ -18,7 +18,7 @@ namespace Menus
 
 			assert(success);
 
-			RE::BSGFxObject::make_unique_ptr(FusionCoreMeter_mc, *uiMovie, "root.FusionCoreMeter_mc");
+			FusionCoreMeter_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*uiMovie, "root.FusionCoreMeter_mc");
 			if (FusionCoreMeter_mc)
 			{
 				FusionCoreMeter_mc->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor, 1.0);

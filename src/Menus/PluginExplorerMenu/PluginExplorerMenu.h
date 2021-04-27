@@ -28,28 +28,28 @@ namespace Menus
 				ScaleformManager->LoadMovieEx(*this, "Interface/PluginExplorerMenu.swf", "root.Menu_mc");
 			assert(LoadMovieSuccess);
 
-			RE::BSGFxObject::make_unique_ptr(filterHolder, *uiMovie, "root.Menu_mc");
+			filterHolder = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*uiMovie, "root.Menu_mc");
 			if (filterHolder)
 			{
 				filterHolder->CreateAndSetFiltersToHUD(RE::HUDColorTypes::kGameplayHUDColor);
 				shaderFXObjects.push_back(filterHolder.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(LPaneBackground_mc, *filterHolder, "LeftPane_mc.Background_mc");
+			LPaneBackground_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*filterHolder, "LeftPane_mc.Background_mc");
 			if (LPaneBackground_mc)
 			{
 				LPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(LPaneBackground_mc.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(RPaneBackground_mc, *filterHolder, "RightPane_mc.Background_mc");
+			RPaneBackground_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*filterHolder, "RightPane_mc.Background_mc");
 			if (RPaneBackground_mc)
 			{
 				RPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
 				shaderFXObjects.push_back(RPaneBackground_mc.get());
 			}
 
-			RE::BSGFxObject::make_unique_ptr(TPaneBackground_mc, *filterHolder, "CategoryBar_mc.BackerBar_mc");
+			TPaneBackground_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*filterHolder, "CategoryBar_mc.BackerBar_mc");
 			if (TPaneBackground_mc)
 			{
 				TPaneBackground_mc->EnableShadedBackground(RE::HUDColorTypes::kMenuNoColorBackground);
