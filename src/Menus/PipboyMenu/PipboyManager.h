@@ -10,9 +10,8 @@ namespace Menus
 			REL::Relocation<std::uintptr_t> targetLower{ REL::ID(302903) };
 			REL::Relocation<std::uintptr_t> targetRaise{ REL::ID(726763) };
 
-			auto& trampoline = F4SE::GetTrampoline();
-			trampoline.write_branch<6>(targetLower.address(), PipboyManager__ProcessLoweringReason);
-			trampoline.write_branch<6>(targetRaise.address(), PipboyManager__RaisePipboy);
+			stl::asm_replace(targetLower.address(), 0x066, reinterpret_cast<std::uintptr_t>(PipboyManager__ProcessLoweringReason));
+			stl::asm_replace(targetRaise.address(), 0x100, reinterpret_cast<std::uintptr_t>(PipboyManager__RaisePipboy));
 		}
 
 	private:

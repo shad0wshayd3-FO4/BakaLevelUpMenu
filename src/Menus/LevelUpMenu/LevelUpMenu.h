@@ -13,10 +13,9 @@ namespace Menus
 			REL::Relocation<std::uintptr_t> targetShow{ REL::ID(1436715) };
 			REL::Relocation<std::uintptr_t> targetTrig{ REL::ID(997886) };
 
-			auto& trampoline = F4SE::GetTrampoline();
-			trampoline.write_branch<5>(targetInit.address(), LevelUpMenu__Init);
-			trampoline.write_branch<5>(targetShow.address(), LevelUpMenu__ShowMenu);
-			trampoline.write_branch<6>(targetTrig.address(), LevelUpMenu__Trigger);
+			stl::asm_replace(targetInit.address(), 0x40, reinterpret_cast<std::uintptr_t>(LevelUpMenu__Init));
+			stl::asm_replace(targetShow.address(), 0xA3, reinterpret_cast<std::uintptr_t>(LevelUpMenu__ShowMenu));
+			stl::asm_replace(targetTrig.address(), 0x10, reinterpret_cast<std::uintptr_t>(LevelUpMenu__Trigger));
 		}
 
 		static void ShowMenu(bool a_fromPipboy)
@@ -28,7 +27,6 @@ namespace Menus
 		{
 			menuFlags.set(
 				RE::UI_MENU_FLAGS::kPausesGame,
-				// RE::UI_MENU_FLAGS::kAlwaysOpen,
 				RE::UI_MENU_FLAGS::kUsesCursor,
 				RE::UI_MENU_FLAGS::kDisablePauseMenu,
 				RE::UI_MENU_FLAGS::kUpdateUsesCursor,
@@ -76,7 +74,7 @@ namespace Menus
 			case 1:
 				if (a_params.argCount == 1 && a_params.args[0].IsString())
 				{
-					PlayMenuSound(a_params.args[0].GetString());
+					RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
 				}
 				break;
 

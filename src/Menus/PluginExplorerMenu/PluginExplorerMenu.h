@@ -13,7 +13,6 @@ namespace Menus
 		{
 			menuFlags.set(
 				RE::UI_MENU_FLAGS::kPausesGame,
-				RE::UI_MENU_FLAGS::kAlwaysOpen,
 				RE::UI_MENU_FLAGS::kUsesCursor,
 				RE::UI_MENU_FLAGS::kDisablePauseMenu,
 				RE::UI_MENU_FLAGS::kUpdateUsesCursor,
@@ -77,7 +76,7 @@ namespace Menus
 			case 1:
 				if (a_params.argCount == 1 && a_params.args[0].IsString())
 				{
-					PlayMenuSound(a_params.args[0].GetString());
+					RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
 				}
 				break;
 
@@ -98,16 +97,16 @@ namespace Menus
 				break;
 
 			case 5:
-				if ((a_params.argCount == 1) && (a_params.args[0].IsUInt()))
+				if ((a_params.argCount == 2) && a_params.args[0].IsUInt() && a_params.args[1].IsInt())
 				{
-					auto form = RE::TESForm::GetFormByID(a_params.args[0].GetUInt());
-					if (form)
+					auto object = RE::TESForm::GetFormByID(a_params.args[0].GetUInt())->As<RE::TESBoundObject>();
+					if (object)
 					{
-						RE::Scaleform::GFx::Value ItemCardInfoList[1];
-						Utils::PopulateItemCard(uiMovie, ItemCardInfoList[0], form);
-						menuObj.Invoke("onUpdateItemCardInfoList", nullptr, ItemCardInfoList, 1);
+						auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
+						PlayerCharacter->AddObjectToContainer(object, nullptr, a_params.args[1].GetInt(), nullptr, RE::ITEM_REMOVE_REASON::kNone);
 					}
 				}
+				break;
 
 			default:
 				break;
@@ -121,7 +120,7 @@ namespace Menus
 			MapCodeMethodToASFunction("NotifyLoaded", 2);
 			MapCodeMethodToASFunction("InitPluginList", 3);
 			MapCodeMethodToASFunction("SetTextEntry", 4);
-			MapCodeMethodToASFunction("TestItemCardInfoList", 5);
+			MapCodeMethodToASFunction("AddItem", 5);
 		}
 
 		virtual void HandleEvent(const RE::ButtonEvent* a_event) override

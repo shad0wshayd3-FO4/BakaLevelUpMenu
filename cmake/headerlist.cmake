@@ -3,6 +3,8 @@ set(headers ${headers}
 	src/Settings.h
 	src/Forms/Forms.h
 	src/Menus/Menus.h
+	src/Menus/ContainerMenu/BarterMenu.h
+	src/Menus/ContainerMenu/ContainerMenu.h
 	src/Menus/HUDMenuEx/HUDMenuEx.h
 	src/Menus/LevelUpMenu/LevelUpMenu.h
 	src/Menus/LevelUpMenu/PerkManager.h

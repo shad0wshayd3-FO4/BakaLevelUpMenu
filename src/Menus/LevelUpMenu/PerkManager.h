@@ -13,13 +13,14 @@ namespace Menus
 		public:
 			PerkCondition(RE::TESConditionItem* a_condition)
 			{
-				switch (a_condition->data.FunctionData.function.get())
+				RE::stl::enumeration functionID{ RE::SCRIPT_OUTPUT::START_OF_FUNCTION_SECTION, a_condition->data.functionData.function.get() };
+				switch (functionID.get())
 				{
 				case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
 				case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
 				case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
 					{
-						auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.FunctionData.param[0]);
+						auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.functionData.param[0]);
 						if (!actorValue)
 						{
 							_isValid = false;
@@ -76,7 +77,7 @@ namespace Menus
 
 				case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
 					{
-						auto perk = static_cast<RE::BGSPerk*>(a_condition->data.FunctionData.param[0]);
+						auto perk = static_cast<RE::BGSPerk*>(a_condition->data.functionData.param[0]);
 						if (!perk)
 						{
 							_isValid = false;

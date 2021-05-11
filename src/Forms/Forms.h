@@ -17,6 +17,7 @@ private:
 				"LooseModKeyword_DO",
 				RE::ENUM_FORM_ID::kKYWD);
 
+		logger::debug("Injected DefaultObjects."sv);
 		return 1;
 	}
 
@@ -55,12 +56,11 @@ private:
 public:
 	static void InstallHooks()
 	{
-		REL::Relocation<std::uintptr_t> target_DefaultObject{ REL::ID(1359842) };
-		REL::Relocation<std::uintptr_t> target_Setting{ REL::ID(984976) };
+		REL::Relocation<std::uintptr_t> targetDefault{ REL::ID(1359842) };
+		REL::Relocation<std::uintptr_t> targetSetting{ REL::ID(984976) };
 
-		auto& trampoline = F4SE::GetTrampoline();
-		trampoline.write_branch<6>(target_DefaultObject.address(), HookInitializer_DefaultObject);
-		trampoline.write_branch<5>(target_Setting.address(), HookInitializer_Setting);
+		stl::asm_replace(targetDefault.address(), 0x31, reinterpret_cast<std::uintptr_t>(HookInitializer_DefaultObject));
+		stl::asm_replace(targetSetting.address(), 0x68, reinterpret_cast<std::uintptr_t>(HookInitializer_Setting));
 	}
 
 	// members
