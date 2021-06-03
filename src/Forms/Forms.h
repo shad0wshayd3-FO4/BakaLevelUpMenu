@@ -12,11 +12,6 @@ private:
 				"This ammo is worn on the actors body.",
 				RE::ENUM_FORM_ID::kKYWD);
 
-		LooseModKeyword_DO =
-			RE::DefaultObjectFormFactory::Create(
-				"LooseModKeyword_DO",
-				RE::ENUM_FORM_ID::kKYWD);
-
 		logger::debug("Injected DefaultObjects."sv);
 		return 1;
 	}
@@ -77,6 +72,4 @@ public:
 	inline static RE::Setting sBakaRanks{ "sBakaRanks", "Ranks: {:d}" };
 	inline static RE::Setting sBakaLevelUpText{ "sBakaLevelUpText", "Welcome to Level {:d}" };
 	inline static RE::Setting sBakaPerkMenu{ "sBakaPerkMenu", "Perk Menu" };
-
-	inline static RE::BGSDefaultObject* LooseModKeyword_DO{ nullptr };
 };

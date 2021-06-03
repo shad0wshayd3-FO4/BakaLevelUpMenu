@@ -267,13 +267,13 @@ namespace Menus
 							listEntry.SetMember("textFormID", textFormID.data());
 							listEntry.SetMember("FormID", form.first);
 
-							if (misc->HasKeyword(Forms::LooseModKeyword_DO->GetForm<RE::BGSKeyword>(), nullptr))
-							{
-								a_mods.PushBack(listEntry);
-							}
-							else if (misc->componentData && misc->componentData->size() > 0)
+							if (misc->componentData && misc->componentData->size() > 0)
 							{
 								a_junk.PushBack(listEntry);
+							}
+							else if (misc->IsLooseMod())
+							{
+								a_mods.PushBack(listEntry);
 							}
 							else
 							{
