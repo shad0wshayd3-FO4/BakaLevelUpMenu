@@ -4,6 +4,28 @@
 
 namespace Menus
 {
+	class TakeAllCallback :
+		public RE::IMessageBoxCallback
+	{
+	public:
+		TakeAllCallback(RE::ContainerMenu* a_menu) :
+			menu(a_menu)
+		{}
+
+		// override
+		virtual void operator()(std::uint8_t a_buttonIdx)
+		{
+			if (a_buttonIdx == 0)
+			{
+				menu->TakeAllItems();
+			}
+			menu->SetMessageBoxMode(false);
+		}
+
+		// members
+		RE::ContainerMenu* menu{ nullptr };
+	};
+
 	class ContainerMenu
 	{
 	public:
@@ -14,6 +36,7 @@ namespace Menus
 			REL::Relocation<std::uintptr_t> targetVTBL_0{ RE::ContainerMenu::VTABLE[0] };
 			REL::Relocation<std::uintptr_t> targetVTBL_1{ RE::ContainerMenu::VTABLE[1] };
 			REL::Relocation<std::uintptr_t> targetPopulateObj{ REL::ID(969445), 0x53 };
+			REL::Relocation<std::uintptr_t> targetPopulateItm{ REL::ID(969445), 0x5E };
 
 			auto& trampoline = F4SE::GetTrampoline();
 			_ContainerMenu__CTOR = trampoline.write_call<5>(targetCTOR.address(), ContainerMenu__CTOR);
@@ -23,6 +46,7 @@ namespace Menus
 			_ContainerMenu__OnButtonEventRelease = targetVTBL_0.write_vfunc(0x0F, reinterpret_cast<std::uintptr_t>(ContainerMenu__OnButtonEventRelease));
 			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(ContainerMenu__HandleEvent));
 			trampoline.write_call<5>(targetPopulateObj.address(), InventoryUserUIUtils__PopulateMenuObj);
+			trampoline.write_call<5>(targetPopulateItm.address(), InventoryUserUIUtils__PopulateItemCardInfo);
 		}
 
 		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
@@ -47,6 +71,24 @@ namespace Menus
 				}
 			}
 
+			auto Interface3D = RE::Interface3D::Renderer::GetByName("Container3D"sv);
+			if (Interface3D)
+			{
+				Interface3D->postFX = RE::Interface3D::PostEffect::kNone;
+			}
+
+			auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
+			if (UIMessageQueue)
+			{
+				UIMessageQueue->AddMessage("VignetteMenu"sv, RE::UI_MESSAGE_TYPE::kHide);
+			}
+
+			auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource();
+			if (CanDisplayNextHUDMessage)
+			{
+				CanDisplayNextHUDMessage->Notify(false);
+			}
+
 			return a_this;
 		}
 
@@ -54,13 +96,19 @@ namespace Menus
 		{
 			_ContainerMenu__DTOR(a_this);
 
-			CategoryBar_mc.release();
 			CategoryBarBackground_mc.release();
+			CategoryBar_mc.release();
+
+			auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource();
+			if (CanDisplayNextHUDMessage)
+			{
+				CanDisplayNextHUDMessage->Notify(true);
+			}
 		}
 
-		static void ContainerMenu__Call(RE::ContainerMenuBase* a_this, const RE::Scaleform::GFx::FunctionHandler::Params& a_params)
+		static void ContainerMenu__Call(RE::ContainerMenu* a_this, const RE::Scaleform::GFx::FunctionHandler::Params& a_params)
 		{
-			switch ((*((std::uint32_t*)&(a_params.userData))))
+			switch (reinterpret_cast<std::uint64_t>(a_params.userData))
 			{
 			case 3:  // Show3D
 				if (a_params.argCount == 2 && a_params.args[0].IsInt() && a_params.args[1].IsBoolean())
@@ -72,6 +120,37 @@ namespace Menus
 					}
 
 					_ContainerMenu__Call(a_this, a_params);
+				}
+				break;
+
+			case 4:  // ExitMenu
+				{
+					auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
+					if (UIMessageQueue)
+					{
+						UIMessageQueue->AddMessage("ContainerMenu",
+							RE::UI_MESSAGE_TYPE::kHide);
+					}
+				}
+				break;
+
+			case 5:  // TakeAllItems
+				{
+					if (a_this->containerInv.stackedEntries.size() < uConfirmContainerTakeAllMinimumItems->GetUInt())
+					{
+						a_this->TakeAllItems();
+					}
+					else
+					{
+						auto MessageMenuManager = RE::MessageMenuManager::GetSingleton();
+						if (MessageMenuManager)
+						{
+							auto mbCallback = new TakeAllCallback(a_this);
+							MessageMenuManager->Create("", sConfirmContainerTakeAll->GetString().data(),
+								mbCallback, RE::WARNING_TYPES::kInGameMessage, "$OK", "$Cancel");
+							a_this->SetMessageBoxMode(true);
+						}
+					}
 				}
 				break;
 
@@ -143,21 +222,82 @@ namespace Menus
 			// a_this->MapCodeMethodToASFunction("", 18);
 		}
 
-		static void ContainerMenu__HandleEvent(RE::IMenu* a_this, [[maybe_unused]] const RE::ButtonEvent* a_event)
+		static void ContainerMenu__HandleEvent(RE::BSInputEventUser* a_this, const RE::ButtonEvent* a_event)
 		{
-			logger::info("MenuName: {:s}", a_this->menuName);
-			logger::info("IsObject: {:s}", a_this->menuObj.IsObject() ? "True" : "False");
+			auto menu = RE::fallout_cast<RE::ContainerMenu*>(a_this);
+			if (menu && menu->menuObj.IsObject() && menu->menuObj.HasMember("ProcessUserEvent"))
+			{
+				if (!a_event->disabled && menu->inputEventHandlingEnabled)
+				{
+					RE::Scaleform::GFx::Value args[2];
+					args[0] = "DISABLED";
+					args[1] = a_event->QJustPressed();
+
+					switch (a_event->GetBSButtonCode())
+					{
+					case RE::BS_BUTTON_CODE::kTab:
+					case RE::BS_BUTTON_CODE::kBButton:
+						args[0] = "Cancel";
+						break;
+
+					case RE::BS_BUTTON_CODE::kEnter:
+					case RE::BS_BUTTON_CODE::kE:
+					case RE::BS_BUTTON_CODE::kAButton:
+						args[0] = "Accept";
+						break;
+
+					case RE::BS_BUTTON_CODE::kZ:
+					case RE::BS_BUTTON_CODE::kLControl:
+					case RE::BS_BUTTON_CODE::kLShoulder:
+						args[0] = "Prev";
+						break;
+
+					case RE::BS_BUTTON_CODE::kC:
+					case RE::BS_BUTTON_CODE::kLAlt:
+					case RE::BS_BUTTON_CODE::kRShoulder:
+						args[0] = "Next";
+						break;
+
+					case RE::BS_BUTTON_CODE::kLTrigger:
+						args[0] = "LTrigger";
+						break;
+
+					case RE::BS_BUTTON_CODE::kRTrigger:
+						args[0] = "RTrigger";
+						break;
+
+					case RE::BS_BUTTON_CODE::kQ:
+					case RE::BS_BUTTON_CODE::kLStick:
+						args[0] = "Sort";
+						break;
+
+					case RE::BS_BUTTON_CODE::kR:
+					case RE::BS_BUTTON_CODE::kXButton:
+						args[0] = "TakeAll";
+						break;
+
+					case RE::BS_BUTTON_CODE::kT:
+					case RE::BS_BUTTON_CODE::kYButton:
+						args[0] = "Equip";
+						break;
+
+					case RE::BS_BUTTON_CODE::kX:
+					case RE::BS_BUTTON_CODE::kRStick:
+						args[0] = "Inspect";
+						break;
+					}
+
+					menu->menuObj.Invoke("ProcessUserEvent", nullptr, args, 2);
+				}
+			}
 		}
 
-		static bool ContainerMenu__OnButtonEventRelease(
-			[[maybe_unused]] RE::ContainerMenu* a_this,
-			[[maybe_unused]] const RE::BSFixedString& a_eventName)
+		static bool ContainerMenu__OnButtonEventRelease([[maybe_unused]] RE::ContainerMenu* a_this, [[maybe_unused]] const RE::BSFixedString& a_eventName)
 		{
-			return false;
+			return true;
 		}
 
-		static void ContainerMenuBase__ItemSorter__IncrementSort(
-			RE::ContainerMenuBase::ItemSorter* a_this)
+		static void ContainerMenuBase__ItemSorter__IncrementSort(RE::ContainerMenuBase::ItemSorter* a_this)
 		{
 			using SORT_ON_FIELD = RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD;
 			auto GetNextSort = [](SORT_ON_FIELD a_current, std::vector<SORT_ON_FIELD> a_valid)
@@ -169,7 +309,6 @@ namespace Menus
 			auto currentTab = a_this->currentTab;
 			switch (currentTab)
 			{
-			case 0:  // Inventory
 			case 1:  // Weapons
 				a_this->currentSort[currentTab] =
 					GetNextSort(a_this->currentSort[currentTab].get(),
@@ -201,10 +340,7 @@ namespace Menus
 			}
 		}
 
-		static void InventoryUserUIUtils__PopulateMenuObj(
-			RE::ObjectRefHandle a_inventoryRef,
-			const RE::InventoryUserUIInterfaceEntry& a_entry,
-			RE::Scaleform::GFx::Value& a_menuObj)
+		static void InventoryUserUIUtils__PopulateMenuObj(RE::ObjectRefHandle a_inventoryRef, const RE::InventoryUserUIInterfaceEntry& a_entry, RE::Scaleform::GFx::Value& a_menuObj)
 		{
 			auto BGSInventoryInterface = RE::BGSInventoryInterface::GetSingleton();
 			if (BGSInventoryInterface)
@@ -212,8 +348,23 @@ namespace Menus
 				auto item = BGSInventoryInterface->RequestInventoryItem(a_entry.invHandle.id);
 				if (item)
 				{
-					auto iidd = InventoryItemDisplayDataEx(a_inventoryRef, a_entry);
+					auto iidd = Utils::InventoryItemDisplayDataEx(a_inventoryRef, a_entry);
 					iidd.PopulateFlashObject(a_menuObj);
+				}
+			}
+		}
+
+		static void InventoryUserUIUtils__PopulateItemCardInfo(const RE::InventoryUserUIInterfaceEntry& a_entry, RE::Scaleform::GFx::Value& a_menuObj)
+		{
+			auto BGSInventoryInterface = RE::BGSInventoryInterface::GetSingleton();
+			if (BGSInventoryInterface)
+			{
+				auto item = BGSInventoryInterface->RequestInventoryItem(a_entry.invHandle.id);
+				if (item && item->object)
+				{
+					RE::UIUtils::ComparisonItems comparisonItems;
+					RE::UIUtils::GetComparisonItems(item->object, comparisonItems);
+					Utils::PopulateItemCardInfo(a_menuObj, *item, a_entry.stackIndex[0], comparisonItems, false);
 				}
 			}
 		}
@@ -223,5 +374,8 @@ namespace Menus
 		static inline REL::Relocation<decltype(ContainerMenu__Call)> _ContainerMenu__Call;
 		static inline REL::Relocation<decltype(ContainerMenu__MapCodeObjectFunctions)> _ContainerMenu__MapCodeObjectFunctions;
 		static inline REL::Relocation<decltype(ContainerMenu__OnButtonEventRelease)> _ContainerMenu__OnButtonEventRelease;
+
+		static inline REL::Relocation<RE::SettingT<RE::GameSettingCollection>*> sConfirmContainerTakeAll{ REL::ID(1418009) };
+		static inline REL::Relocation<RE::SettingT<RE::INISettingCollection>*> uConfirmContainerTakeAllMinimumItems{ REL::ID(122882) };
 	};
 }

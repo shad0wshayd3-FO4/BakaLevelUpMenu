@@ -13,4 +13,6 @@ set(headers ${headers}
 	src/Menus/PluginExplorerMenu/PluginExplorerMenu.h
 	src/Menus/Scaleform/Log.h
 	src/Menus/Utils/Utils.h
+	src/Menus/Utils/InventoryItemDisplayData/InventoryItemDisplayData.h
+	src/Menus/Utils/ItemCard/ItemCard.h
 )
