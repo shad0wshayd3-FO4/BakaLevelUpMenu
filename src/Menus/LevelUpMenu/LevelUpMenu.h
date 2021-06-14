@@ -105,8 +105,7 @@ namespace Menus
 			case 7:
 				if ((a_params.argCount == 1) && (a_params.args[0].IsUInt()))
 				{
-					auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
-					PlayerCharacter->SelectPerk(a_params.args[0].GetUInt());
+					SelectPerk(a_params.args[0].GetUInt());
 				}
 				break;
 
@@ -265,6 +264,24 @@ namespace Menus
 				RE::Scaleform::GFx::Value Header[1];
 				Header[0] = HeaderText.c_str();
 				menuObj.Invoke("SetHeader", nullptr, Header, 1);
+			}
+		}
+
+		void SelectPerk(std::uint32_t a_perkID)
+		{
+			auto perk = RE::TESForm::GetFormByID(a_perkID)->As<RE::BGSPerk>();
+			if (perk)
+			{
+				auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
+				PlayerCharacter->AddPerk(perk);
+				PlayerCharacter->perkCount -= 1;
+
+				// Notify
+				auto evn = RE::PerkPointIncreaseEvent::GetEventSource();
+				if (evn)
+				{
+					evn->Notify(PlayerCharacter->perkCount);
+				}
 			}
 		}
 
