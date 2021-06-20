@@ -9,31 +9,31 @@ void F4SEMessageHandler(F4SE::MessagingInterface::Message* a_msg)
 
 	switch (a_msg->type)
 	{
-	case F4SE::MessagingInterface::kGameDataReady:
-		{
-			if (static_cast<bool>(a_msg->data))
+		case F4SE::MessagingInterface::kGameDataReady:
 			{
-				logger::debug("GameDataReady - Loaded"sv);
+				if (static_cast<bool>(a_msg->data))
+				{
+					logger::debug("GameDataReady - Loaded"sv);
 
-				// Register Menus
-				Menus::Register();
+					// Register Menus
+					Menus::Register();
 
-				// Initialize PluginExplorer data
-				Menus::PluginExplorer::Initialize();
+					// Initialize PluginExplorer data
+					Menus::PluginExplorer::Initialize();
+				}
+				else
+				{
+					logger::debug("GameDataReady - Unloaded"sv);
+
+					// Reset PluginExplorer data
+					Menus::PluginExplorer::Reset();
+				}
+
+				break;
 			}
-			else
-			{
-				logger::debug("GameDataReady - Unloaded"sv);
 
-				// Reset PluginExplorer data
-				Menus::PluginExplorer::Reset();
-			}
-
+		default:
 			break;
-		}
-
-	default:
-		break;
 	}
 }
 
@@ -46,7 +46,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 		return false;
 	}
 
-	*logPath /= "BakaInterface.log"sv;
+	*logPath /= fmt::format(FMT_STRING("{}.log"), Version::PROJECT);
 	auto logSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logPath->string(), true);
 	auto log = std::make_shared<spdlog::logger>("plugin_log"s, std::move(logSink));
 
@@ -57,7 +57,11 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 
 	// Set log level from ini
 	Settings::Load();
+#ifdef NDEBUG
 	if (*Settings::EnableDebugLogging)
+#else
+	if (true)
+#endif
 	{
 		spdlog::set_level(spdlog::level::debug);
 	}
@@ -67,12 +71,12 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 	}
 
 	// Initial messages
-	logger::info("{} log opened."sv, "BakaInterface"sv);
+	logger::info(FMT_STRING("{} v{} log opened."), Version::PROJECT, Version::NAME);
 	logger::debug("Debug logging enabled."sv);
 
 	// Initialize PluginInfo
 	a_info->infoVersion = F4SE::PluginInfo::kVersion;
-	a_info->name = "BakaInterface";
+	a_info->name = Version::PROJECT.data();
 	a_info->version = Version::MAJOR;
 
 	// Check if we're being loaded in the CK.
@@ -86,7 +90,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 	const auto ver = a_F4SE->RuntimeVersion();
 	if (ver < F4SE::RUNTIME_1_10_163)
 	{
-		logger::critical("Unsupported runtime v{}, marking as incompatible."sv, ver.string());
+		logger::critical(FMT_STRING("Unsupported runtime v{}, marking as incompatible."), ver.string());
 		return false;
 	}
 

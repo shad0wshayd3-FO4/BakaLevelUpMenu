@@ -16,100 +16,112 @@ namespace Menus
 				RE::stl::enumeration functionID{ RE::SCRIPT_OUTPUT::START_OF_FUNCTION_SECTION, a_condition->data.functionData.function.get() };
 				switch (functionID.get())
 				{
-				case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
-				case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
-				case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
-					{
-						auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.functionData.param[0]);
-						if (!actorValue)
+					case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
+					case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
+					case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
 						{
-							_isValid = false;
+							auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.functionData.param[0]);
+							if (!actorValue)
+							{
+								_isValid = false;
+								break;
+							}
+
+							auto compareValue = a_condition->GetComparisonValue();
+							switch (a_condition->data.condition)
+							{
+								case RE::ENUM_COMPARISON_CONDITION::kEqual:
+									_conditionText = fmt::format(
+										Forms::sBakaEqual.GetString(),
+										actorValue->GetFullName(),
+										compareValue);
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
+									_conditionText = fmt::format(
+										Forms::sBakaNotEqual.GetString(),
+										actorValue->GetFullName(),
+										compareValue);
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
+									_conditionText = fmt::format(
+										Forms::sBakaGreater.GetString(),
+										actorValue->GetFullName(),
+										compareValue + 1.0F);
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
+									_conditionText = fmt::format(
+										Forms::sBakaGreaterEqual.GetString(),
+										actorValue->GetFullName(),
+										compareValue);
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kLessThan:
+									_conditionText = fmt::format(
+										Forms::sBakaLess.GetString(),
+										actorValue->GetFullName(),
+										compareValue);
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
+									_conditionText = fmt::format(
+										Forms::sBakaLessEqual.GetString(),
+										actorValue->GetFullName(),
+										compareValue + 1.0F);
+									break;
+								default:
+									_isValid = false;
+									break;
+							}
+
+							_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
 							break;
 						}
 
-						auto compareValue = a_condition->GetComparisonValue();
-						switch (a_condition->data.condition)
+					case RE::SCRIPT_OUTPUT::FUNCTION_GET_IS_SEX:
+					case RE::SCRIPT_OUTPUT::FUNCTION_GET_GLOBAL_VALUE:
 						{
-						case RE::ENUM_COMPARISON_CONDITION::kEqual:
-							_conditionText = fmt::format(Forms::sBakaEqual.GetString(),
-								actorValue->GetFullName(), compareValue);
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-							_conditionText = fmt::format(Forms::sBakaNotEqual.GetString(),
-								actorValue->GetFullName(), compareValue);
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
-							_conditionText = fmt::format(Forms::sBakaGreater.GetString(),
-								actorValue->GetFullName(), compareValue + 1.0F);
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
-							_conditionText = fmt::format(Forms::sBakaGreaterEqual.GetString(),
-								actorValue->GetFullName(), compareValue);
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kLessThan:
-							_conditionText = fmt::format(Forms::sBakaLess.GetString(),
-								actorValue->GetFullName(), compareValue);
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
-							_conditionText = fmt::format(Forms::sBakaLessEqual.GetString(),
-								actorValue->GetFullName(), compareValue + 1.0F);
-							break;
-						default:
-							_isValid = false;
+							if (!a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr))
+							{
+								_isValid = false;
+							}
+
+							_isBlank = true;
 							break;
 						}
 
-						_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
+					case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
+						{
+							auto perk = static_cast<RE::BGSPerk*>(a_condition->data.functionData.param[0]);
+							if (!perk)
+							{
+								_isValid = false;
+								break;
+							}
+
+							auto compareValue = a_condition->GetComparisonValue();
+							if (compareValue != 1.0F)
+							{
+								_isValid = false;
+								break;
+							}
+
+							switch (a_condition->data.condition)
+							{
+								case RE::ENUM_COMPARISON_CONDITION::kEqual:
+									_conditionText = fmt::format(Forms::sBakaHasPerk.GetString(), perk->GetFullName());
+									break;
+								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
+									_conditionText = fmt::format(Forms::sBakaNotPerk.GetString(), perk->GetFullName());
+									break;
+								default:
+									_isValid = false;
+									break;
+							}
+
+							_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
+							break;
+						}
+
+					default:
 						break;
-					}
-
-				case RE::SCRIPT_OUTPUT::FUNCTION_GET_IS_SEX:
-				case RE::SCRIPT_OUTPUT::FUNCTION_GET_GLOBAL_VALUE:
-					{
-						if (!a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr))
-						{
-							_isValid = false;
-						}
-
-						_isBlank = true;
-						break;
-					}
-
-				case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
-					{
-						auto perk = static_cast<RE::BGSPerk*>(a_condition->data.functionData.param[0]);
-						if (!perk)
-						{
-							_isValid = false;
-							break;
-						}
-
-						auto compareValue = a_condition->GetComparisonValue();
-						if (compareValue != 1.0F)
-						{
-							_isValid = false;
-							break;
-						}
-
-						switch (a_condition->data.condition)
-						{
-						case RE::ENUM_COMPARISON_CONDITION::kEqual:
-							_conditionText = fmt::format(Forms::sBakaHasPerk.GetString(), perk->GetFullName());
-							break;
-						case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-							_conditionText = fmt::format(Forms::sBakaNotPerk.GetString(), perk->GetFullName());
-							break;
-						default:
-							_isValid = false;
-							break;
-						}
-
-						_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
-						break;
-					}
-
-				default:
-					break;
 				}
 
 				_isOr = (a_condition->next && a_condition->data.compareOr);
@@ -136,7 +148,8 @@ namespace Menus
 			{
 				if (auto condition = a_perk->perkConditions.head; condition)
 				{
-					do {
+					do
+					{
 						PerkCondition newCondition{ condition };
 						if (!newCondition.IsValid())
 						{
@@ -258,14 +271,21 @@ namespace Menus
 					}
 
 					std::string reqsText = fmt::format(Forms::sBakaReqs.GetString(), levelText);
-					_conditionText = fmt::format("{:s}<br>{:s}<br><br>{:s}",
-						reqsText, ranksText, GetDescription());
+					_conditionText = fmt::format(
+						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"),
+						reqsText,
+						ranksText,
+						GetDescription());
 				}
 				else
 				{
 					std::string reqsText = fmt::format(Forms::sBakaReqs.GetString(), levelText);
-					_conditionText = fmt::format("{:s}, {:s}<br>{:s}<br><br>{:s}",
-						reqsText, perkConditions.GetConditionText(), ranksText, GetDescription());
+					_conditionText = fmt::format(
+						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"),
+						reqsText,
+						perkConditions.GetConditionText(),
+						ranksText,
+						GetDescription());
 				}
 			}
 
@@ -315,7 +335,7 @@ namespace Menus
 				{
 					auto curPerk = _perkChain[i];
 					auto curRank = RE::PlayerCharacter::GetSingleton()
-					                   ->GetPerkRank(curPerk.GetPerk());
+									   ->GetPerkRank(curPerk.GetPerk());
 
 					if (!curPerk.IsValid())
 					{
@@ -348,7 +368,7 @@ namespace Menus
 				auto IsValidPath = [](auto a_path)
 				{
 					RE::BSTSmartPointer<RE::BSResource::Stream> stream{ nullptr };
-					auto relativePath = fmt::format("Interface\\{:s}"s, a_path);
+					auto relativePath = fmt::format(FMT_STRING("Interface\\{:s}"), a_path);
 					return (RE::BSResource::GetOrCreateStream(relativePath.c_str(), stream) == RE::BSResource::ErrorCode::kNone);
 				};
 
@@ -360,7 +380,7 @@ namespace Menus
 						continue;
 					}
 
-					auto formattedPath = fmt::format("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"s, _perkChain[i]->formID);
+					auto formattedPath = fmt::format(FMT_STRING("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"), _perkChain[i]->formID);
 					if (IsValidPath(formattedPath))
 					{
 						_perkChain[i].SetPerkIcon(formattedPath);
@@ -453,7 +473,7 @@ namespace Menus
 	private:
 		static std::string ErrorTag(std::string_view a_string)
 		{
-			return fmt::format("<font color=\'#888888\'>{:s}</font>", a_string);
+			return fmt::format(FMT_STRING("<font color=\'#888888\'>{:s}</font>"), a_string);
 		}
 
 		RE::BGSPerk* GetFirstPerkInChain(RE::BGSPerk* a_perk)

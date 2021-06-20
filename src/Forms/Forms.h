@@ -59,7 +59,7 @@ public:
 	}
 
 	// members
-	inline static RE::Setting sBakaEqual{"sBakaEqual","{:s} is exactly {:0.0F}"};
+	inline static RE::Setting sBakaEqual{ "sBakaEqual", "{:s} is exactly {:0.0F}" };
 	inline static RE::Setting sBakaNotEqual{ "sBakaNotEqual", "{:s} is not {:0.0F}" };
 	inline static RE::Setting sBakaGreater{ "sBakaGreater", "{:s} {:0.0F}" };
 	inline static RE::Setting sBakaGreaterEqual{ "sBakaGreaterEqual", "{:s} {:0.0F}" };

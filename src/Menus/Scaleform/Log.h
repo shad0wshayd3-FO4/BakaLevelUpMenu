@@ -43,11 +43,8 @@ private:
 
 			std::string formatted{ buffer.data() };
 			formatted.erase(
-				std::remove_if(formatted.end() - 1, formatted.end(),
-					[](const char x)
-					{
-						return (x == '\n');
-					}),
+				std::remove_if(formatted.end() - 1, formatted.end(), [](const char x)
+							   { return (x == '\n'); }),
 				formatted.end());
 
 			fileLog->info(formatted.data());

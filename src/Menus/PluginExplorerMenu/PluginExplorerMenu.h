@@ -69,47 +69,47 @@ namespace Menus
 		{
 			switch ((*((std::uint32_t*)&(a_params.userData))))
 			{
-			case 0:
-				CloseMenu();
-				break;
+				case 0:
+					CloseMenu();
+					break;
 
-			case 1:
-				if (a_params.argCount == 1 && a_params.args[0].IsString())
-				{
-					RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
-				}
-				break;
-
-			case 2:
-				NotifyLoaded();
-				break;
-
-			case 3:
-				InitPluginList();
-				break;
-
-			case 4:
-				if ((a_params.argCount == 1) && (a_params.args[0].IsBoolean()))
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->SetTextEntryMode(a_params.args[0].GetBoolean());
-				}
-				break;
-
-			case 5:
-				if ((a_params.argCount == 2) && a_params.args[0].IsUInt() && a_params.args[1].IsInt())
-				{
-					auto object = RE::TESForm::GetFormByID(a_params.args[0].GetUInt())->As<RE::TESBoundObject>();
-					if (object)
+				case 1:
+					if (a_params.argCount == 1 && a_params.args[0].IsString())
 					{
-						auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
-						PlayerCharacter->AddObjectToContainer(object, nullptr, a_params.args[1].GetInt(), nullptr, RE::ITEM_REMOVE_REASON::kNone);
+						RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
 					}
-				}
-				break;
+					break;
 
-			default:
-				break;
+				case 2:
+					NotifyLoaded();
+					break;
+
+				case 3:
+					InitPluginList();
+					break;
+
+				case 4:
+					if ((a_params.argCount == 1) && (a_params.args[0].IsBoolean()))
+					{
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->SetTextEntryMode(a_params.args[0].GetBoolean());
+					}
+					break;
+
+				case 5:
+					if ((a_params.argCount == 2) && a_params.args[0].IsUInt() && a_params.args[1].IsInt())
+					{
+						auto object = RE::TESForm::GetFormByID(a_params.args[0].GetUInt())->As<RE::TESBoundObject>();
+						if (object)
+						{
+							auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
+							PlayerCharacter->AddObjectToContainer(object, nullptr, a_params.args[1].GetInt(), nullptr, RE::ITEM_REMOVE_REASON::kNone);
+						}
+					}
+					break;
+
+				default:
+					break;
 			}
 		}
 
@@ -135,33 +135,33 @@ namespace Menus
 
 					switch (a_event->GetBSButtonCode())
 					{
-					case RE::BS_BUTTON_CODE::kTab:
-					case RE::BS_BUTTON_CODE::kBButton:
-						args[0] = a_event->QUserEvent() != "NextFocus" ? "Cancel" : "DISABLED"; // dumb workaround
-						break;
+						case RE::BS_BUTTON_CODE::kTab:
+						case RE::BS_BUTTON_CODE::kBButton:
+							args[0] = a_event->QUserEvent() != "NextFocus" ? "Cancel" : "DISABLED";	 // dumb workaround
+							break;
 
-					case RE::BS_BUTTON_CODE::kEnter:
-					case RE::BS_BUTTON_CODE::kE:
-					case RE::BS_BUTTON_CODE::kAButton:
-						args[0] = "Accept";
-						break;
+						case RE::BS_BUTTON_CODE::kEnter:
+						case RE::BS_BUTTON_CODE::kE:
+						case RE::BS_BUTTON_CODE::kAButton:
+							args[0] = "Accept";
+							break;
 
-					case RE::BS_BUTTON_CODE::kZ:
-					case RE::BS_BUTTON_CODE::kLControl:
-					case RE::BS_BUTTON_CODE::kLShoulder:
-						args[0] = "Prev";
-						break;
+						case RE::BS_BUTTON_CODE::kZ:
+						case RE::BS_BUTTON_CODE::kLControl:
+						case RE::BS_BUTTON_CODE::kLShoulder:
+							args[0] = "Prev";
+							break;
 
-					case RE::BS_BUTTON_CODE::kC:
-					case RE::BS_BUTTON_CODE::kLAlt:
-					case RE::BS_BUTTON_CODE::kRShoulder:
-						args[0] = "Next";
-						break;
+						case RE::BS_BUTTON_CODE::kC:
+						case RE::BS_BUTTON_CODE::kLAlt:
+						case RE::BS_BUTTON_CODE::kRShoulder:
+							args[0] = "Next";
+							break;
 
-					case RE::BS_BUTTON_CODE::kQ:
-					case RE::BS_BUTTON_CODE::kLStick:
-						args[0] = "Search";
-						break;
+						case RE::BS_BUTTON_CODE::kQ:
+						case RE::BS_BUTTON_CODE::kLStick:
+							args[0] = "Search";
+							break;
 					}
 
 					menuObj.Invoke("ProcessUserEvent", nullptr, args, 2);
@@ -173,30 +173,30 @@ namespace Menus
 		{
 			switch (*a_message.type)
 			{
-			case RE::UI_MESSAGE_TYPE::kShow:
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
-					RE::SendHUDMessage::PushHUDMode("SpecialMode");
+				case RE::UI_MESSAGE_TYPE::kShow:
+					{
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+						RE::SendHUDMessage::PushHUDMode("SpecialMode");
 
-					return RE::UI_MESSAGE_RESULTS::kPassOn;
-				}
+						return RE::UI_MESSAGE_RESULTS::kPassOn;
+					}
 
-			case RE::UI_MESSAGE_TYPE::kHide:
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
-					RE::SendHUDMessage::PopHUDMode("SpecialMode");
+				case RE::UI_MESSAGE_TYPE::kHide:
+					{
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+						RE::SendHUDMessage::PopHUDMode("SpecialMode");
 
-					return RE::UI_MESSAGE_RESULTS::kPassOn;
-				}
+						return RE::UI_MESSAGE_RESULTS::kPassOn;
+					}
 
-			default:
-				return RE::IMenu::ProcessMessage(a_message);
+				default:
+					return RE::IMenu::ProcessMessage(a_message);
 			}
 		}
 
@@ -212,7 +212,8 @@ namespace Menus
 			if (UIMessageQueue)
 			{
 				UIMessageQueue->AddMessage(
-					"PluginExplorerMenu", RE::UI_MESSAGE_TYPE::kHide);
+					"PluginExplorerMenu",
+					RE::UI_MESSAGE_TYPE::kHide);
 			}
 		}
 
@@ -239,7 +240,7 @@ namespace Menus
 					uiMovie->CreateArray(&a_value);
 					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format("[{:08X}]", entry.first);
+						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"), entry.first);
 
 						RE::Scaleform::GFx::Value listEntry;
 						uiMovie->CreateObject(&listEntry);
@@ -257,7 +258,7 @@ namespace Menus
 					uiMovie->CreateArray(&a_mods);
 					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format("[{:08X}]", entry.first);
+						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"), entry.first);
 						if (auto form = RE::TESForm::GetFormByID(entry.first); form)
 						{
 							if (auto misc = form->As<RE::TESObjectMISC>(); misc)
@@ -296,9 +297,7 @@ namespace Menus
 				ProcessMISCs(MISC, JUNK, MODS, iter.second.GetMapMISC());
 
 				std::string pluginIndex =
-					(iter.first >= 0xFE) ?
-						fmt::format("[FE][{:03X}]", iter.first - 0xFE) :
-						fmt::format("[{:02X}]", iter.first);
+					(iter.first >= 0xFE) ? fmt::format(FMT_STRING("[FE][{:03X}]"), iter.first - 0xFE) : fmt::format(FMT_STRING("[{:02X}]"), iter.first);
 
 				RE::Scaleform::GFx::Value listEntry;
 				uiMovie->CreateObject(&listEntry);

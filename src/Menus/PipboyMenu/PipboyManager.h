@@ -24,20 +24,22 @@ namespace Menus
 
 			switch (a_this->loweringReason.get())
 			{
-			case RE::PipboyManager::LOWER_REASON::kBook:
-				{
-					auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
-					UIMessageQueue->AddMessage("BookMenu", RE::UI_MESSAGE_TYPE::kShow);
-					break;
-				}
+				case RE::PipboyManager::LOWER_REASON::kBook:
+					{
+						auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
+						UIMessageQueue->AddMessage("BookMenu", RE::UI_MESSAGE_TYPE::kShow);
+						break;
+					}
 
-			case RE::PipboyManager::LOWER_REASON::kPerkGrid:
-				{
-					auto PlayerControls = RE::PlayerControls::GetSingleton();
-					PlayerControls->DoAction(RE::DEFAULT_OBJECT::kActionPipboyInspect, RE::ActionInput::ACTIONPRIORITY::kTry);
-					LevelUpMenu::ShowMenu(true);
-					break;
-				}
+				case RE::PipboyManager::LOWER_REASON::kPerkGrid:
+					{
+						auto PlayerControls = RE::PlayerControls::GetSingleton();
+						PlayerControls->DoAction(
+							RE::DEFAULT_OBJECT::kActionPipboyInspect,
+							RE::ActionInput::ACTIONPRIORITY::kTry);
+						LevelUpMenu::ShowMenu(true);
+						break;
+					}
 			}
 		}
 

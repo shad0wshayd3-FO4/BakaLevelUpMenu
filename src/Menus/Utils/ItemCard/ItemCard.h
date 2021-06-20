@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Menus
 {
@@ -19,7 +19,8 @@ namespace Menus
 					ComponentData(RE::TESForm* a_component, std::uint32_t a_count) :
 						_name(RE::TESFullName::GetFullName(*a_component)), _count(a_count)
 					{
-						if (auto FavoritesManager = RE::FavoritesManager::GetSingleton(); FavoritesManager) {
+						if (auto FavoritesManager = RE::FavoritesManager::GetSingleton(); FavoritesManager)
+						{
 							_taggedForSearch = FavoritesManager->IsComponentFavorite(a_component->As<RE::TESBoundObject>());
 						}
 					}
@@ -143,76 +144,78 @@ namespace Menus
 
 							switch (item->effectSetting->data.archetype.get())
 							{
-							case RE::EffectArchetypes::ArchetypeID::kValueModifier:
-							case RE::EffectArchetypes::ArchetypeID::kDualValueModifier:
-							case RE::EffectArchetypes::ArchetypeID::kPeakValueModifier:
-								{
-									auto primaryAV = item->effectSetting->data.primaryAV;
-									if (primaryAV)
+								case RE::EffectArchetypes::ArchetypeID::kValueModifier:
+								case RE::EffectArchetypes::ArchetypeID::kDualValueModifier:
+								case RE::EffectArchetypes::ArchetypeID::kPeakValueModifier:
 									{
-										std::string effectName{ !primaryAV->abbreviation.empty() ? primaryAV->abbreviation.c_str() : primaryAV->GetFullName() };
-										if (!effectName.empty())
+										auto primaryAV = item->effectSetting->data.primaryAV;
+										if (primaryAV)
 										{
-											_effectList.push_back(
-												new Effects::Value{ effectName.c_str(), itemMag, itemDur });
+											std::string effectName{ !primaryAV->abbreviation.empty() ? primaryAV->abbreviation.c_str() : primaryAV->GetFullName() };
+											if (!effectName.empty())
+											{
+												_effectList.push_back(
+													new Effects::Value{ effectName.c_str(), itemMag, itemDur });
+											}
 										}
 									}
-								}
-								break;
+									break;
 
-							case RE::EffectArchetypes::ArchetypeID::kStimpak:
-								{
-									auto primaryAV = item->effectSetting->data.primaryAV;
-									if (primaryAV)
+								case RE::EffectArchetypes::ArchetypeID::kStimpak:
 									{
-										std::string effectName{ !primaryAV->abbreviation.empty() ? primaryAV->abbreviation.c_str() : primaryAV->GetFullName() };
-										if (!effectName.empty())
+										auto primaryAV = item->effectSetting->data.primaryAV;
+										if (primaryAV)
 										{
-											_effectList.push_back(
-												new Effects::Stimpak{ effectName.c_str(), itemMag, itemDur });
+											std::string effectName{ !primaryAV->abbreviation.empty() ? primaryAV->abbreviation.c_str() : primaryAV->GetFullName() };
+											if (!effectName.empty())
+											{
+												_effectList.push_back(
+													new Effects::Stimpak{ effectName.c_str(), itemMag, itemDur });
+											}
 										}
 									}
-								}
-								break;
+									break;
 
-							case RE::EffectArchetypes::ArchetypeID::kScript:
-							case RE::EffectArchetypes::ArchetypeID::kCalm:
-							case RE::EffectArchetypes::ArchetypeID::kDemoralize:
-							case RE::EffectArchetypes::ArchetypeID::kFrenzy:
-							case RE::EffectArchetypes::ArchetypeID::kParalyze:
-							case RE::EffectArchetypes::ArchetypeID::kCureAddiction:
-							case RE::EffectArchetypes::ArchetypeID::kCloak:
-							case RE::EffectArchetypes::ArchetypeID::kSlowTime:
-								{
-									RE::BSStringT<char> descriptionText;
-									item->GetDescription(&descriptionText, "", "", itemMag, itemDur);
-									if (!descriptionText.empty())
+								case RE::EffectArchetypes::ArchetypeID::kScript:
+								case RE::EffectArchetypes::ArchetypeID::kCalm:
+								case RE::EffectArchetypes::ArchetypeID::kDemoralize:
+								case RE::EffectArchetypes::ArchetypeID::kFrenzy:
+								case RE::EffectArchetypes::ArchetypeID::kParalyze:
+								case RE::EffectArchetypes::ArchetypeID::kCureAddiction:
+								case RE::EffectArchetypes::ArchetypeID::kCloak:
+								case RE::EffectArchetypes::ArchetypeID::kSlowTime:
 									{
-										_effectList.push_back(
-											new Effects::Description{ descriptionText.c_str() });
+										RE::BSStringT<char> descriptionText;
+										item->GetDescription(&descriptionText, "", "", itemMag, itemDur);
+										if (!descriptionText.empty())
+										{
+											_effectList.push_back(
+												new Effects::Description{ descriptionText.c_str() });
+										}
 									}
-								}
-								break;
+									break;
 
-							case RE::EffectArchetypes::ArchetypeID::kChameleon:
-							case RE::EffectArchetypes::ArchetypeID::kInvisibility:
-								{
-									// Chameleon for x Seconds?
-								}
-								break;
+								case RE::EffectArchetypes::ArchetypeID::kChameleon:
+								case RE::EffectArchetypes::ArchetypeID::kInvisibility:
+									{
+										// Chameleon for x Seconds?
+									}
+									break;
 
-							case RE::EffectArchetypes::ArchetypeID::kStagger:
-							case RE::EffectArchetypes::ArchetypeID::kUnused01:
-							case RE::EffectArchetypes::ArchetypeID::kUnused02:
-								{
-									// Ignore
-								}
-								break;
+								case RE::EffectArchetypes::ArchetypeID::kStagger:
+								case RE::EffectArchetypes::ArchetypeID::kUnused01:
+								case RE::EffectArchetypes::ArchetypeID::kUnused02:
+									{
+										// Ignore
+									}
+									break;
 
-							default:
-								logger::warn("Unhandled ArchetypeID {:02d} on FormID {:08X}",
-									item->effectSetting->data.archetype.underlying(), a_magicItem->formID);
-								break;
+								default:
+									logger::warn(
+										FMT_STRING("Unhandled ArchetypeID {:02d} on FormID {:08X}"),
+										item->effectSetting->data.archetype.underlying(),
+										a_magicItem->formID);
+									break;
 							}
 						}
 					}
@@ -262,7 +265,7 @@ namespace Menus
 					InitWeight();
 				}
 
-				template <class T>
+				template<class T>
 				T* GetObjectAs() const noexcept
 				{
 					return _object ? _object->As<T>() : nullptr;
@@ -273,31 +276,34 @@ namespace Menus
 				{
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kMISC:
-						{
-							auto misc = _object->As<RE::TESObjectMISC>();
-							if (misc && misc->componentData)
+						case RE::ENUM_FORM_ID::kMISC:
 							{
-								for (auto iter : *misc->componentData)
+								auto misc = _object->As<RE::TESObjectMISC>();
+								if (misc && misc->componentData)
 								{
-									auto formID = iter.first->formID;
-									if (auto idx = std::find_if(_componentList.begin(), _componentList.end(), [&](IC::ComponentPair& a_idx)
-											{ return a_idx.first == formID; });
-										idx != _componentList.end())
+									for (auto iter : *misc->componentData)
 									{
-										idx->second.IncCount(iter.second.i);
-									}
-									else
-									{
-										_componentList.emplace_back(formID, IC::ComponentData{ iter.first, iter.second.i });
+										auto formID = iter.first->formID;
+										if (auto idx = std::find_if(_componentList.begin(), _componentList.end(), [&](IC::ComponentPair& a_idx)
+																	{ return a_idx.first == formID; });
+											idx != _componentList.end())
+										{
+											idx->second.IncCount(iter.second.i);
+										}
+										else
+										{
+											_componentList.emplace_back(formID, IC::ComponentData{ iter.first, iter.second.i });
+										}
 									}
 								}
 							}
-						}
-						break;
+							break;
 					}
 
-					std::sort(_componentList.begin(), _componentList.end(), [](IC::ComponentPair& t1, IC::ComponentPair& t2)
+					std::sort(
+						_componentList.begin(),
+						_componentList.end(),
+						[](IC::ComponentPair& t1, IC::ComponentPair& t2)
 						{ return t1.second < t2.second; });
 				}
 
@@ -305,44 +311,44 @@ namespace Menus
 				{
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-					case RE::ENUM_FORM_ID::kWEAP:
-						{
-							if (_stack && _stack->extra)
+						case RE::ENUM_FORM_ID::kARMO:
+						case RE::ENUM_FORM_ID::kWEAP:
 							{
-								auto omod = _stack->extra->GetLegendaryMod();
-								if (omod)
+								if (_stack && _stack->extra)
 								{
-									RE::BSStringT<char> descriptionText;
-									omod->GetDescription(descriptionText);
-									if (!descriptionText.empty())
+									auto omod = _stack->extra->GetLegendaryMod();
+									if (omod)
 									{
-										_effectData.ProcessDescription(descriptionText.c_str());
+										RE::BSStringT<char> descriptionText;
+										omod->GetDescription(descriptionText);
+										if (!descriptionText.empty())
+										{
+											_effectData.ProcessDescription(descriptionText.c_str());
+										}
 									}
 								}
 							}
-						}
-						break;
+							break;
 
-					case RE::ENUM_FORM_ID::kMISC:
-						{
-							auto misc = _object->As<RE::TESObjectMISC>();
-							if (misc)
+						case RE::ENUM_FORM_ID::kMISC:
 							{
-								RE::BSScrapArray<RE::BGSMod::Attachment::Mod*> omods;
-								RE::BGSMod::Attachment::Mod::FindModsForLooseMod(misc, omods);
-								if (omods.size())
+								auto misc = _object->As<RE::TESObjectMISC>();
+								if (misc)
 								{
-									RE::BSStringT<char> descriptionText;
-									omods[0]->GetDescription(descriptionText);
-									if (!descriptionText.empty())
+									RE::BSScrapArray<RE::BGSMod::Attachment::Mod*> omods;
+									RE::BGSMod::Attachment::Mod::FindModsForLooseMod(misc, omods);
+									if (omods.size())
 									{
-										_effectData.ProcessDescription(descriptionText.c_str());
+										RE::BSStringT<char> descriptionText;
+										omods[0]->GetDescription(descriptionText);
+										if (!descriptionText.empty())
+										{
+											_effectData.ProcessDescription(descriptionText.c_str());
+										}
 									}
 								}
 							}
-						}
-						break;
+							break;
 					}
 				}
 
@@ -351,13 +357,13 @@ namespace Menus
 					RE::BSScrapArray<RE::BSTTuple<std::uint32_t, float>> TypeInfo;
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						RE::PipboyInventoryUtils::FillResistTypeInfo(*_item, _stack, TypeInfo, 1.0f);
-						break;
+						case RE::ENUM_FORM_ID::kARMO:
+							RE::PipboyInventoryUtils::FillResistTypeInfo(*_item, _stack, TypeInfo, 1.0f);
+							break;
 
-					case RE::ENUM_FORM_ID::kWEAP:
-						RE::PipboyInventoryUtils::FillDamageTypeInfo(*_item, _stack, TypeInfo);
-						break;
+						case RE::ENUM_FORM_ID::kWEAP:
+							RE::PipboyInventoryUtils::FillDamageTypeInfo(*_item, _stack, TypeInfo);
+							break;
 					}
 
 					for (auto iter : TypeInfo)
@@ -370,34 +376,9 @@ namespace Menus
 				{
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						{
-							_maxHealth = static_cast<float>(RE::TESHealthForm::GetFormHealth(_object, _data));
-							_curHealth = 0.0f;
-
-							if (_stack && _stack->extra)
+						case RE::ENUM_FORM_ID::kARMO:
 							{
-								_curHealth = _maxHealth * 1.0f;
-								auto extraHealth = _stack->extra->GetByType<RE::ExtraHealth>();
-								if (extraHealth)
-								{
-									_curHealth = _maxHealth * extraHealth->health;
-								}
-							}
-						}
-						break;
-
-					case RE::ENUM_FORM_ID::kWEAP:
-						{
-						}
-						break;
-
-					case RE::ENUM_FORM_ID::kAMMO:
-						{
-							auto ammo = _object->As<RE::TESAmmo>();
-							if (ammo && ammo->HasKeyword(RE::PowerArmor::GetBatteryKeyword()))
-							{
-								_maxHealth = RE::PowerArmor::fNewBatteryCapacity->GetFloat();
+								_maxHealth = static_cast<float>(RE::TESHealthForm::GetFormHealth(_object, _data));
 								_curHealth = 0.0f;
 
 								if (_stack && _stack->extra)
@@ -410,14 +391,39 @@ namespace Menus
 									}
 								}
 							}
-						}
-						break;
+							break;
 
-					case RE::ENUM_FORM_ID::kALCH:
-					case RE::ENUM_FORM_ID::kINGR:
-						{
-						}
-						break;
+						case RE::ENUM_FORM_ID::kWEAP:
+							{
+							}
+							break;
+
+						case RE::ENUM_FORM_ID::kAMMO:
+							{
+								auto ammo = _object->As<RE::TESAmmo>();
+								if (ammo && ammo->HasKeyword(RE::PowerArmor::GetBatteryKeyword()))
+								{
+									_maxHealth = RE::PowerArmor::fNewBatteryCapacity->GetFloat();
+									_curHealth = 0.0f;
+
+									if (_stack && _stack->extra)
+									{
+										_curHealth = _maxHealth * 1.0f;
+										auto extraHealth = _stack->extra->GetByType<RE::ExtraHealth>();
+										if (extraHealth)
+										{
+											_curHealth = _maxHealth * extraHealth->health;
+										}
+									}
+								}
+							}
+							break;
+
+						case RE::ENUM_FORM_ID::kALCH:
+						case RE::ENUM_FORM_ID::kINGR:
+							{
+							}
+							break;
 					}
 				}
 
@@ -434,46 +440,47 @@ namespace Menus
 
 						switch (data->type.get())
 						{
-						case RE::WEAPON_TYPE::kGun:
-							{
-								_weaponType = RE::WEAPON_TYPE::kGun;
-								if (data->ammo)
+							case RE::WEAPON_TYPE::kGun:
 								{
-									_ammoName = data->ammo->shortDesc.c_str();
-									if (RE::TESAmmo::GetReloadsWithAmmoRef(data->ammo))
+									_weaponType = RE::WEAPON_TYPE::kGun;
+									if (data->ammo)
 									{
-										_ammoText = "-"sv;
+										_ammoName = data->ammo->shortDesc.c_str();
+										if (RE::TESAmmo::GetReloadsWithAmmoRef(data->ammo))
+										{
+											_ammoText = "-"sv;
+										}
+										else
+										{
+											_ammoText = fmt::format(
+												FMT_STRING("{:d}"),
+												RE::PlayerCharacter::GetSingleton()->GetInventoryObjectCount(data->ammo));
+										}
 									}
-									else
-									{
-										_ammoText = fmt::format("{:d}"sv,
-											RE::PlayerCharacter::GetSingleton()->GetInventoryObjectCount(data->ammo));
-									}
+
+									auto objectInstance = RE::BGSObjectInstanceT<RE::TESObjectWEAP>(weap, data);
+									_weaponROF = RE::CombatFormulas::GetWeaponDisplayRateOfFire(*weap, data);
+									_weaponRNG = RE::CombatFormulas::GetWeaponDisplayRange(objectInstance);
+									_weaponACC = RE::CombatFormulas::GetWeaponDisplayAccuracy(objectInstance, nullptr);
 								}
+								break;
 
-								auto objectInstance = RE::BGSObjectInstanceT<RE::TESObjectWEAP>(weap, data);
-								_weaponROF = RE::CombatFormulas::GetWeaponDisplayRateOfFire(*weap, data);
-								_weaponRNG = RE::CombatFormulas::GetWeaponDisplayRange(objectInstance);
-								_weaponACC = RE::CombatFormulas::GetWeaponDisplayAccuracy(objectInstance, nullptr);
-							}
-							break;
+							case RE::WEAPON_TYPE::kGrenade:
+							case RE::WEAPON_TYPE::kMine:
+								{
+									_weaponType = RE::WEAPON_TYPE::kGrenade;
 
-						case RE::WEAPON_TYPE::kGrenade:
-						case RE::WEAPON_TYPE::kMine:
-							{
-								_weaponType = RE::WEAPON_TYPE::kGrenade;
+									auto objectInstance = RE::BGSObjectInstanceT<RE::TESObjectWEAP>(weap, data);
+									_weaponRNG = RE::CombatFormulas::GetWeaponDisplayRange(objectInstance);
+								}
+								break;
 
-								auto objectInstance = RE::BGSObjectInstanceT<RE::TESObjectWEAP>(weap, data);
-								_weaponRNG = RE::CombatFormulas::GetWeaponDisplayRange(objectInstance);
-							}
-							break;
-
-						default:
-							{
-								_weaponType = RE::WEAPON_TYPE::kOneHandSword;
-								_meleeSpeed = RE::TESObjectWEAP::GetMeleeAttackSpeedLabel(weap->GetMeleeAttackSpeed());
-							}
-							break;
+							default:
+								{
+									_weaponType = RE::WEAPON_TYPE::kOneHandSword;
+									_meleeSpeed = RE::TESObjectWEAP::GetMeleeAttackSpeedLabel(weap->GetMeleeAttackSpeed());
+								}
+								break;
 						}
 					}
 				}
@@ -482,34 +489,34 @@ namespace Menus
 				{
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						{
-							auto armo = _object->As<RE::TESObjectARMO>();
-							if (armo)
+						case RE::ENUM_FORM_ID::kARMO:
 							{
-								RE::TESObjectARMO::InstanceData* data{ &armo->armorData };
-								if (_data)
+								auto armo = _object->As<RE::TESObjectARMO>();
+								if (armo)
 								{
-									data = reinterpret_cast<RE::TESObjectARMO::InstanceData*>(_data);
-								}
-
-								if (armo->formEnchanting)
-								{
-									_effectData.ProcessEffects(armo->formEnchanting->listOfEffects, armo->formEnchanting);
-								}
-
-								if (data && data->enchantments)
-								{
-									for (auto iter : *data->enchantments)
+									RE::TESObjectARMO::InstanceData* data{ &armo->armorData };
+									if (_data)
 									{
-										_effectData.ProcessEffects(iter->listOfEffects, iter);
+										data = reinterpret_cast<RE::TESObjectARMO::InstanceData*>(_data);
+									}
+
+									if (armo->formEnchanting)
+									{
+										_effectData.ProcessEffects(armo->formEnchanting->listOfEffects, armo->formEnchanting);
+									}
+
+									if (data && data->enchantments)
+									{
+										for (auto iter : *data->enchantments)
+										{
+											_effectData.ProcessEffects(iter->listOfEffects, iter);
+										}
 									}
 								}
 							}
-						}
-						break;
+							break;
 
-					/*
+							/*
 					case RE::ENUM_FORM_ID::kWEAP:
 						{
 							auto weap = _object->As<RE::TESObjectWEAP>();
@@ -538,16 +545,16 @@ namespace Menus
 						break;
 					*/
 
-					case RE::ENUM_FORM_ID::kALCH:
-					case RE::ENUM_FORM_ID::kINGR:
-						{
-							auto alch = _object->As<RE::MagicItem>();
-							if (alch)
+						case RE::ENUM_FORM_ID::kALCH:
+						case RE::ENUM_FORM_ID::kINGR:
 							{
-								_effectData.ProcessEffects(alch->listOfEffects, alch);
+								auto alch = _object->As<RE::MagicItem>();
+								if (alch)
+								{
+									_effectData.ProcessEffects(alch->listOfEffects, alch);
+								}
 							}
-						}
-						break;
+							break;
 					}
 				}
 
@@ -598,8 +605,15 @@ namespace Menus
 				public ItemCardInfo
 			{
 			public:
-				ItemCardInfoEntry(RE::Scaleform::GFx::Movie* a_movie, RE::Scaleform::GFx::Value* a_itemCardInfoList, const RE::BGSInventoryItem* a_item, std::uint32_t a_stackID, RE::UIUtils::ComparisonItems& a_comparisonItems, bool a_forceArmorComparison = false) :
-					ItemCardInfo(a_item, a_stackID), _movie(a_movie), _itemCardInfoList(a_itemCardInfoList), _forceArmorComparison(a_forceArmorComparison)
+				ItemCardInfoEntry(
+					RE::Scaleform::GFx::Movie* a_movie,
+					RE::Scaleform::GFx::Value* a_itemCardInfoList,
+					const RE::BGSInventoryItem* a_item,
+					std::uint32_t a_stackID,
+					RE::UIUtils::ComparisonItems& a_comparisonItems,
+					bool a_forceArmorComparison = false) :
+					ItemCardInfo(a_item, a_stackID),
+					_movie(a_movie), _itemCardInfoList(a_itemCardInfoList), _forceArmorComparison(a_forceArmorComparison)
 				{
 					for (auto iter : a_comparisonItems)
 					{
@@ -614,42 +628,42 @@ namespace Menus
 				{
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						PopulateDamage();
-						PopulateHealth();
-						PopulateEffects();
-						PopulateWeightValue();
-						break;
+						case RE::ENUM_FORM_ID::kARMO:
+							PopulateDamage();
+							PopulateHealth();
+							PopulateEffects();
+							PopulateWeightValue();
+							break;
 
-					case RE::ENUM_FORM_ID::kWEAP:
-						PopulateDamage();
-						PopulateWeaponAmmo();
-						// PopulateHealth();
-						PopulateEffects();
-						PopulateWeaponData();
-						PopulateWeightValue();
-						break;
+						case RE::ENUM_FORM_ID::kWEAP:
+							PopulateDamage();
+							PopulateWeaponAmmo();
+							// PopulateHealth();
+							PopulateEffects();
+							PopulateWeaponData();
+							PopulateWeightValue();
+							break;
 
-					case RE::ENUM_FORM_ID::kALCH:
-					case RE::ENUM_FORM_ID::kINGR:
-						PopulateEffects();
-						// PopulateHealth();
-						PopulateWeightValue();
-						break;
+						case RE::ENUM_FORM_ID::kALCH:
+						case RE::ENUM_FORM_ID::kINGR:
+							PopulateEffects();
+							// PopulateHealth();
+							PopulateWeightValue();
+							break;
 
-					case RE::ENUM_FORM_ID::kMISC:
-						PopulateComponents();
-						PopulateEffects();
-						PopulateWeightValue();
-						break;
+						case RE::ENUM_FORM_ID::kMISC:
+							PopulateComponents();
+							PopulateEffects();
+							PopulateWeightValue();
+							break;
 
-					case RE::ENUM_FORM_ID::kAMMO:
-						PopulateHealth();
-						PopulateWeightValue();
-						break;
+						case RE::ENUM_FORM_ID::kAMMO:
+							PopulateHealth();
+							PopulateWeightValue();
+							break;
 
-					default:
-						PopulateWeightValue();
+						default:
+							PopulateWeightValue();
 					}
 				}
 
@@ -683,48 +697,48 @@ namespace Menus
 
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						{
-							auto tARMO = _object->As<RE::TESObjectARMO>();
-							for (auto iter : _comparisonItems)
+						case RE::ENUM_FORM_ID::kARMO:
 							{
-								auto cARMO = iter.GetObjectAs<RE::TESObjectARMO>();
-								if (cARMO && RE::PipboyInventoryUtils::DoSlotsOverlap(tARMO, cARMO))
+								auto tARMO = _object->As<RE::TESObjectARMO>();
+								for (auto iter : _comparisonItems)
 								{
-									if (RE::PowerArmor::PlayerInPowerArmor())
+									auto cARMO = iter.GetObjectAs<RE::TESObjectARMO>();
+									if (cARMO && RE::PipboyInventoryUtils::DoSlotsOverlap(tARMO, cARMO))
 									{
-										auto pKYWD = RE::PowerArmor::GetArmorKeyword();
-										if (!tARMO->HasKeyword(pKYWD) || !cARMO->HasKeyword(pKYWD))
+										if (RE::PowerArmor::PlayerInPowerArmor())
 										{
-											continue;
+											auto pKYWD = RE::PowerArmor::GetArmorKeyword();
+											if (!tARMO->HasKeyword(pKYWD) || !cARMO->HasKeyword(pKYWD))
+											{
+												continue;
+											}
+										}
+
+										HasComparisonItem = true;
+										for (auto i = 0; i < cDamageList.size(); i++)
+										{
+											cDamageList[i].second += iter._damageList[i].second;
 										}
 									}
-
-									HasComparisonItem = true;
-									for (auto i = 0; i < cDamageList.size(); i++)
-									{
-										cDamageList[i].second += iter._damageList[i].second;
-									}
 								}
 							}
-						}
-						break;
+							break;
 
-					case RE::ENUM_FORM_ID::kWEAP:
-						{
-							for (auto iter : _comparisonItems)
+						case RE::ENUM_FORM_ID::kWEAP:
 							{
-								if (_weaponType == iter._weaponType)
+								for (auto iter : _comparisonItems)
 								{
-									HasComparisonItem = true;
-									for (auto i = 0; i < cDamageList.size(); i++)
+									if (_weaponType == iter._weaponType)
 									{
-										cDamageList[i].second += iter._damageList[i].second;
+										HasComparisonItem = true;
+										for (auto i = 0; i < cDamageList.size(); i++)
+										{
+											cDamageList[i].second += iter._damageList[i].second;
+										}
 									}
 								}
 							}
-						}
-						break;
+							break;
 					}
 
 					if (!HasComparisonItem)
@@ -738,8 +752,7 @@ namespace Menus
 						RE::Scaleform::GFx::Value gfx_Damage;
 						auto tValue = _damageList[i].second;
 						auto cValue = cDamageList[i].second;
-						RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_Damage,
-							ItemCardStr, tValue, tValue - cValue, tValue, cValue);
+						RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_Damage, ItemCardStr, tValue, tValue - cValue, tValue, cValue);
 						gfx_Damage.SetMember("damageType", _damageList[i].first);
 					}
 				}
@@ -751,23 +764,23 @@ namespace Menus
 						return;
 					}
 
-					auto healthStr = fmt::format("{:.0f}/{:.0f}", _curHealth, _maxHealth);
+					auto healthStr = fmt::format(FMT_STRING("{:.0f}/{:.0f}"), _curHealth, _maxHealth);
 					switch (_object->formType.get())
 					{
-					case RE::ENUM_FORM_ID::kARMO:
-						RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$health", healthStr.c_str());
-						break;
+						case RE::ENUM_FORM_ID::kARMO:
+							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$health", healthStr.c_str());
+							break;
 
-					case RE::ENUM_FORM_ID::kWEAP:
-						break;
+						case RE::ENUM_FORM_ID::kWEAP:
+							break;
 
-					case RE::ENUM_FORM_ID::kAMMO:
-						RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$charge", healthStr.c_str());
-						break;
+						case RE::ENUM_FORM_ID::kAMMO:
+							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$charge", healthStr.c_str());
+							break;
 
-					case RE::ENUM_FORM_ID::kALCH:
-					case RE::ENUM_FORM_ID::kINGR:
-						break;
+						case RE::ENUM_FORM_ID::kALCH:
+						case RE::ENUM_FORM_ID::kINGR:
+							break;
 					}
 				}
 
@@ -775,14 +788,13 @@ namespace Menus
 				{
 					switch (_weaponType)
 					{
-					case RE::WEAPON_TYPE::kGun:
-						{
-							RE::Scaleform::GFx::Value gfx_Ammo;
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_Ammo,
-								_ammoName.c_str(), _ammoText.c_str());
-							gfx_Ammo.SetMember("damageType", 10);
-						}
-						break;
+						case RE::WEAPON_TYPE::kGun:
+							{
+								RE::Scaleform::GFx::Value gfx_Ammo;
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_Ammo, _ammoName.c_str(), _ammoText.c_str());
+								gfx_Ammo.SetMember("damageType", 10);
+							}
+							break;
 					}
 				}
 
@@ -804,35 +816,31 @@ namespace Menus
 
 					switch (_weaponType)
 					{
-					case RE::WEAPON_TYPE::kGun:
-						{
-							RE::Scaleform::GFx::Value gfx_ROF;
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_ROF,
-								"$ROF", _weaponROF, _weaponROF - cWeaponROF);
+						case RE::WEAPON_TYPE::kGun:
+							{
+								RE::Scaleform::GFx::Value gfx_ROF;
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_ROF, "$ROF", _weaponROF, _weaponROF - cWeaponROF);
 
-							RE::Scaleform::GFx::Value gfx_RNG;
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_RNG,
-								"$rng", _weaponRNG, _weaponRNG - cWeaponRNG);
+								RE::Scaleform::GFx::Value gfx_RNG;
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_RNG, "$rng", _weaponRNG, _weaponRNG - cWeaponRNG);
 
-							RE::Scaleform::GFx::Value gfx_ACC;
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_ACC,
-								"$acc", _weaponACC, _weaponACC - cWeaponACC);
-						}
-						break;
+								RE::Scaleform::GFx::Value gfx_ACC;
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_ACC, "$acc", _weaponACC, _weaponACC - cWeaponACC);
+							}
+							break;
 
-					case RE::WEAPON_TYPE::kGrenade:
-						{
-							RE::Scaleform::GFx::Value gfx_RNG;
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_RNG,
-								"$rng", _weaponRNG, _weaponRNG - cWeaponRNG);
-						}
-						break;
+						case RE::WEAPON_TYPE::kGrenade:
+							{
+								RE::Scaleform::GFx::Value gfx_RNG;
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, gfx_RNG, "$rng", _weaponRNG, _weaponRNG - cWeaponRNG);
+							}
+							break;
 
-					case RE::WEAPON_TYPE::kOneHandSword:
-						{
-							RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$speed", _meleeSpeed.c_str());
-						}
-						break;
+						case RE::WEAPON_TYPE::kOneHandSword:
+							{
+								RE::InventoryUserUIUtils::AddItemCardInfoEntry(*_itemCardInfoList, "$speed", _meleeSpeed.c_str());
+							}
+							break;
 					}
 				}
 
@@ -852,37 +860,37 @@ namespace Menus
 						{
 							switch (_object->formType.get())
 							{
-							case RE::ENUM_FORM_ID::kARMO:
-								{
-									if (_forceArmorComparison)
+								case RE::ENUM_FORM_ID::kARMO:
 									{
-										auto tARMO = _object->As<RE::TESObjectARMO>();
-										cItemWeight = 0.0f;
-
-										for (auto iter : _comparisonItems)
+										if (_forceArmorComparison)
 										{
-											auto cARMO = iter.GetObjectAs<RE::TESObjectARMO>();
-											if (cARMO && RE::PipboyInventoryUtils::DoSlotsOverlap(tARMO, cARMO))
+											auto tARMO = _object->As<RE::TESObjectARMO>();
+											cItemWeight = 0.0f;
+
+											for (auto iter : _comparisonItems)
 											{
-												cItemWeight += iter._itemWeight;
+												auto cARMO = iter.GetObjectAs<RE::TESObjectARMO>();
+												if (cARMO && RE::PipboyInventoryUtils::DoSlotsOverlap(tARMO, cARMO))
+												{
+													cItemWeight += iter._itemWeight;
+												}
 											}
 										}
 									}
-								}
-								break;
+									break;
 
-							case RE::ENUM_FORM_ID::kWEAP:
-								{
-									for (auto iter : _comparisonItems)
+								case RE::ENUM_FORM_ID::kWEAP:
 									{
-										if (_weaponType == iter._weaponType)
+										for (auto iter : _comparisonItems)
 										{
-											cItemWeight = iter._itemWeight;
-											break;
+											if (_weaponType == iter._weaponType)
+											{
+												cItemWeight = iter._itemWeight;
+												break;
+											}
 										}
 									}
-								}
-								break;
+									break;
 							}
 						}
 
@@ -940,7 +948,7 @@ namespace Menus
 			}
 			else
 			{
-				logger::error("Menus::Utils::PopulateItemCardInfo: menuObj has no parent movie.");
+				logger::error("Menus::Utils::PopulateItemCardInfo: menuObj has no parent movie."sv);
 			}
 		}
 	}

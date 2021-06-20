@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Menus
 {
@@ -30,73 +30,73 @@ namespace Menus
 
 				switch (a_inventoryItem->object->GetFormType())
 				{
-				case RE::ENUM_FORM_ID::kWEAP:  // Weapons
-					result = FilterFlag::kWeapon;
-					break;
-
-				case RE::ENUM_FORM_ID::kARMO:  // Apparel
-					result = FilterFlag::kApparel;
-					break;
-
-				case RE::ENUM_FORM_ID::kALCH:  // Aid
-				case RE::ENUM_FORM_ID::kINGR:
-					{
-						auto alch = a_inventoryItem->object->As<RE::MagicItem>();
-						if (alch)
-						{
-							auto objectTypeSyringerAmmo = ObjectTypeSyringerAmmo_DO->GetForm<RE::BGSKeyword>();
-							if (objectTypeSyringerAmmo && alch->HasKeyword(objectTypeSyringerAmmo))
-							{
-								result = FilterFlag::kAmmo;
-								break;
-							}
-						}
-					}
-
-					result = FilterFlag::kAid;
-					break;
-
-				case RE::ENUM_FORM_ID::kMISC:  // Misc, Junk, Mods
-					{
-						auto misc = a_inventoryItem->object->As<RE::TESObjectMISC>();
-						if (misc)
-						{
-							if (misc->componentData && misc->componentData->size() > 0)
-							{
-								result = FilterFlag::kJunk;
-								break;
-							}
-
-							if (misc->IsLooseMod())
-							{
-								result = FilterFlag::kMods;
-								break;
-							}
-						}
-
-						result = FilterFlag::kMisc;
+					case RE::ENUM_FORM_ID::kWEAP:  // Weapons
+						result = FilterFlag::kWeapon;
 						break;
-					}
 
-				case RE::ENUM_FORM_ID::kNOTE:  // Holo
-					result = FilterFlag::kHolotapes;
-					break;
+					case RE::ENUM_FORM_ID::kARMO:  // Apparel
+						result = FilterFlag::kApparel;
+						break;
 
-				case RE::ENUM_FORM_ID::kBOOK:  // Note
-					result = FilterFlag::kBooks;
-					break;
+					case RE::ENUM_FORM_ID::kALCH:  // Aid
+					case RE::ENUM_FORM_ID::kINGR:
+						{
+							auto alch = a_inventoryItem->object->As<RE::MagicItem>();
+							if (alch)
+							{
+								auto objectTypeSyringerAmmo = ObjectTypeSyringerAmmo_DO->GetForm<RE::BGSKeyword>();
+								if (objectTypeSyringerAmmo && alch->HasKeyword(objectTypeSyringerAmmo))
+								{
+									result = FilterFlag::kAmmo;
+									break;
+								}
+							}
+						}
 
-				case RE::ENUM_FORM_ID::kKEYM:  // Keys
-					result = FilterFlag::kKeys;
-					break;
+						result = FilterFlag::kAid;
+						break;
 
-				case RE::ENUM_FORM_ID::kAMMO:  // Ammo
-					result = FilterFlag::kAmmo;
-					break;
+					case RE::ENUM_FORM_ID::kMISC:  // Misc, Junk, Mods
+						{
+							auto misc = a_inventoryItem->object->As<RE::TESObjectMISC>();
+							if (misc)
+							{
+								if (misc->componentData && misc->componentData->size() > 0)
+								{
+									result = FilterFlag::kJunk;
+									break;
+								}
 
-				default:
-					logger::error("Unhandled FilterFlag type: {:04X}", a_inventoryItem->object->GetFormType());
-					break;
+								if (misc->IsLooseMod())
+								{
+									result = FilterFlag::kMods;
+									break;
+								}
+							}
+
+							result = FilterFlag::kMisc;
+							break;
+						}
+
+					case RE::ENUM_FORM_ID::kNOTE:  // Holo
+						result = FilterFlag::kHolotapes;
+						break;
+
+					case RE::ENUM_FORM_ID::kBOOK:  // Note
+						result = FilterFlag::kBooks;
+						break;
+
+					case RE::ENUM_FORM_ID::kKEYM:  // Keys
+						result = FilterFlag::kKeys;
+						break;
+
+					case RE::ENUM_FORM_ID::kAMMO:  // Ammo
+						result = FilterFlag::kAmmo;
+						break;
+
+					default:
+						logger::error(FMT_STRING("Unhandled FilterFlag type: {:04X}"), a_inventoryItem->object->GetFormType());
+						break;
 				}
 
 				if (a_stack && a_stack->extra)
@@ -136,8 +136,7 @@ namespace Menus
 						}
 						else
 						{
-							logger::error("[{:08X}] has size 0", item->object->formID);
-							stl::report_and_fail("log");
+							logger::error(FMT_STRING("[{:08X}] has size 0"), item->object->formID);
 						}
 					}
 				}

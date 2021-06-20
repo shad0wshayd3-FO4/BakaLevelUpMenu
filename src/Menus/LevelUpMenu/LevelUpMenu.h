@@ -67,50 +67,50 @@ namespace Menus
 		{
 			switch ((*((std::uint32_t*)&(a_params.userData))))
 			{
-			case 0:
-				CloseMenu();
-				break;
+				case 0:
+					CloseMenu();
+					break;
 
-			case 1:
-				if (a_params.argCount == 1 && a_params.args[0].IsString())
-				{
-					RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
-				}
-				break;
+				case 1:
+					if (a_params.argCount == 1 && a_params.args[0].IsString())
+					{
+						RE::UIUtils::PlayMenuSound(a_params.args[0].GetString());
+					}
+					break;
 
-			case 2:
-				NotifyLoaded();
-				break;
+				case 2:
+					NotifyLoaded();
+					break;
 
-			case 3:
-				InitPerkList();
-				break;
+				case 3:
+					InitPerkList();
+					break;
 
-			case 4:
-				GetPerkCount();
-				break;
+				case 4:
+					GetPerkCount();
+					break;
 
-			case 5:
-				GetHeaderText();
-				break;
+				case 5:
+					GetHeaderText();
+					break;
 
-			case 6:
-				if ((a_params.argCount == 1) && (a_params.args[0].IsBoolean()))
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->SetTextEntryMode(a_params.args[0].GetBoolean());
-				}
-				break;
+				case 6:
+					if ((a_params.argCount == 1) && (a_params.args[0].IsBoolean()))
+					{
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->SetTextEntryMode(a_params.args[0].GetBoolean());
+					}
+					break;
 
-			case 7:
-				if ((a_params.argCount == 1) && (a_params.args[0].IsUInt()))
-				{
-					SelectPerk(a_params.args[0].GetUInt());
-				}
-				break;
+				case 7:
+					if ((a_params.argCount == 1) && (a_params.args[0].IsUInt()))
+					{
+						SelectPerk(a_params.args[0].GetUInt());
+					}
+					break;
 
-			default:
-				break;
+				default:
+					break;
 			}
 		}
 
@@ -130,56 +130,56 @@ namespace Menus
 		{
 			switch (*a_message.type)
 			{
-			case RE::UI_MESSAGE_TYPE::kShow:
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
-					ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
-					RE::SendHUDMessage::PushHUDMode("SpecialMode");
-
-					if (LevelUpMenu::FromPipboy)
+				case RE::UI_MESSAGE_TYPE::kShow:
 					{
-						if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
+						ControlMap->PushInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
+						RE::SendHUDMessage::PushHUDMode("SpecialMode");
+
+						if (LevelUpMenu::FromPipboy)
 						{
-							PipboyManager->LowerPipboy(RE::PipboyManager::LOWER_REASON::kPerkGrid);
+							if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+							{
+								PipboyManager->LowerPipboy(RE::PipboyManager::LOWER_REASON::kPerkGrid);
+							}
 						}
-					}
 
-					if (LevelUpMenu::IsLoaded)
-					{
-						NotifyLoaded();
-					}
-
-					return RE::UI_MESSAGE_RESULTS::kPassOn;
-				}
-
-			case RE::UI_MESSAGE_TYPE::kHide:
-				{
-					auto ControlMap = RE::ControlMap::GetSingleton();
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
-					ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
-					RE::SendHUDMessage::PopHUDMode("SpecialMode");
-
-					if (LevelUpMenu::FromPipboy)
-					{
-						if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+						if (LevelUpMenu::IsLoaded)
 						{
-							PipboyManager->RaisePipboy();
+							NotifyLoaded();
 						}
+
+						return RE::UI_MESSAGE_RESULTS::kPassOn;
 					}
 
-					LevelUpMenu::FromPipboy = false;
-					return RE::UI_MESSAGE_RESULTS::kPassOn;
-				}
+				case RE::UI_MESSAGE_TYPE::kHide:
+					{
+						auto ControlMap = RE::ControlMap::GetSingleton();
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kBasicMenuNav);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kThumbNav);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kVirtualController);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenu);
+						ControlMap->PopInputContext(RE::UserEvents::INPUT_CONTEXT_ID::kLevelUpMenuPrevNext);
+						RE::SendHUDMessage::PopHUDMode("SpecialMode");
 
-			default:
-				return RE::IMenu::ProcessMessage(a_message);
+						if (LevelUpMenu::FromPipboy)
+						{
+							if (auto PipboyManager = RE::PipboyManager::GetSingleton(); PipboyManager)
+							{
+								PipboyManager->RaisePipboy();
+							}
+						}
+
+						LevelUpMenu::FromPipboy = false;
+						return RE::UI_MESSAGE_RESULTS::kPassOn;
+					}
+
+				default:
+					return RE::IMenu::ProcessMessage(a_message);
 			}
 		}
 
@@ -190,7 +190,8 @@ namespace Menus
 			if (UIMessageQueue)
 			{
 				UIMessageQueue->AddMessage(
-					"LevelUpMenu", RE::UI_MESSAGE_TYPE::kHide);
+					"LevelUpMenu",
+					RE::UI_MESSAGE_TYPE::kHide);
 			}
 		}
 
@@ -243,8 +244,7 @@ namespace Menus
 
 		void GetPerkCount()
 		{
-			auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
-			if (PlayerCharacter)
+			if (auto PlayerCharacter = RE::PlayerCharacter::GetSingleton(); PlayerCharacter)
 			{
 				RE::Scaleform::GFx::Value PerkCount[1];
 				PerkCount[0] = PlayerCharacter->perkCount;
@@ -254,8 +254,7 @@ namespace Menus
 
 		void GetHeaderText()
 		{
-			auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
-			if (PlayerCharacter)
+			if (auto PlayerCharacter = RE::PlayerCharacter::GetSingleton(); PlayerCharacter)
 			{
 				auto level = PlayerCharacter->GetLevel();
 				HeaderText = IsNewLevel ? fmt::format(Forms::sBakaLevelUpText.GetString(), level) : Forms::sBakaPerkMenu.GetString();
@@ -315,7 +314,8 @@ namespace Menus
 				{
 					LevelUpMenu::FromPipboy = a_fromPipboy;
 					UIMessageQueue->AddMessage(
-						"LevelUpMenu", RE::UI_MESSAGE_TYPE::kShow);
+						"LevelUpMenu",
+						RE::UI_MESSAGE_TYPE::kShow);
 				}
 			}
 		}

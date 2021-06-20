@@ -14,7 +14,7 @@ namespace Menus
 				name(a_name)
 			{}
 
-			template <class FORM_TYPE>
+			template<class FORM_TYPE>
 			void AddForm(FORM_TYPE a_form)
 			{
 				auto formName = RE::TESFullName::GetFullName(*a_form);
@@ -25,51 +25,51 @@ namespace Menus
 
 				switch (a_form->GetFormType())
 				{
-				case RE::ENUM_FORM_ID::kALCH:
-					{
-						mapALCH.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kAMMO:
-					{
-						mapAMMO.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kARMO:
-					{
-						mapARMO.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kBOOK:
-					{
-						mapBOOK.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kKEYM:
-					{
-						mapKEYS.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kMISC:
-					{
-						mapMISC.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kNOTE:
-					{
-						mapHOLO.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				case RE::ENUM_FORM_ID::kWEAP:
-					{
-						mapWEAP.insert_or_assign(a_form->GetFormID(), formName);
-						break;
-					}
-				default:
-					{
-						logger::warn("ModInfo::Add - Unhandled FormType: {:d}", a_form->GetFormType());
-						break;
-					}
+					case RE::ENUM_FORM_ID::kALCH:
+						{
+							mapALCH.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kAMMO:
+						{
+							mapAMMO.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kARMO:
+						{
+							mapARMO.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kBOOK:
+						{
+							mapBOOK.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kKEYM:
+						{
+							mapKEYS.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kMISC:
+						{
+							mapMISC.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kNOTE:
+						{
+							mapHOLO.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					case RE::ENUM_FORM_ID::kWEAP:
+						{
+							mapWEAP.insert_or_assign(a_form->GetFormID(), formName);
+							break;
+						}
+					default:
+						{
+							logger::warn(FMT_STRING("ModInfo::Add - Unhandled FormType: {:d}"), a_form->GetFormType());
+							break;
+						}
 				}
 			}
 
@@ -116,7 +116,7 @@ namespace Menus
 			auto TESDataHandler = RE::TESDataHandler::GetSingleton();
 			if (!TESDataHandler)
 			{
-				logger::error("Missing TESDataHandler!");
+				logger::error("Missing TESDataHandler!"sv);
 				return;
 			}
 
@@ -163,7 +163,7 @@ namespace Menus
 			return static_cast<std::uint32_t>(a_file->GetCompileIndex() + a_file->GetSmallFileCompileIndex());
 		}
 
-		template <class FORM_TYPE>
+		template<class FORM_TYPE>
 		static void AddForms()
 		{
 			auto TESDataHandler = RE::TESDataHandler::GetSingleton();
