@@ -265,7 +265,7 @@ namespace Menus
 				template <class T>
 				T* GetObjectAs() const noexcept
 				{
-					return _object->As<T>();
+					return _object ? _object->As<T>() : nullptr;
 				}
 
 			private:

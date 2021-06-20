@@ -269,18 +269,20 @@ namespace Menus
 
 		void SelectPerk(std::uint32_t a_perkID)
 		{
-			auto perk = RE::TESForm::GetFormByID(a_perkID)->As<RE::BGSPerk>();
-			if (perk)
+			if (auto form = RE::TESForm::GetFormByID(a_perkID); form)
 			{
-				auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
-				PlayerCharacter->AddPerk(perk);
-				PlayerCharacter->perkCount -= 1;
-
-				// Notify
-				auto evn = RE::PerkPointIncreaseEvent::GetEventSource();
-				if (evn)
+				if (auto perk = form->As<RE::BGSPerk>(); perk)
 				{
-					evn->Notify(PlayerCharacter->perkCount);
+					auto PlayerCharacter = RE::PlayerCharacter::GetSingleton();
+					PlayerCharacter->AddPerk(perk);
+					PlayerCharacter->perkCount -= 1;
+
+					// Notify
+					auto evn = RE::PerkPointIncreaseEvent::GetEventSource();
+					if (evn)
+					{
+						evn->Notify(PlayerCharacter->perkCount);
+					}
 				}
 			}
 		}

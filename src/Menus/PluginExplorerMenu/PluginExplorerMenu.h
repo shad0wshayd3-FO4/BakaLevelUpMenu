@@ -237,15 +237,15 @@ namespace Menus
 				auto ProcessForms = [&](RE::Scaleform::GFx::Value& a_value, const PluginExplorer::PluginInfo::FormMap a_map)
 				{
 					uiMovie->CreateArray(&a_value);
-					for (auto& form : a_map)
+					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format("[{:08X}]", form.first);
+						auto textFormID = fmt::format("[{:08X}]", entry.first);
 
 						RE::Scaleform::GFx::Value listEntry;
 						uiMovie->CreateObject(&listEntry);
-						listEntry.SetMember("text", form.second.data());
+						listEntry.SetMember("text", entry.second.data());
 						listEntry.SetMember("textFormID", textFormID.data());
-						listEntry.SetMember("FormID", form.first);
+						listEntry.SetMember("FormID", entry.first);
 						a_value.PushBack(listEntry);
 					}
 				};
@@ -255,29 +255,31 @@ namespace Menus
 					uiMovie->CreateArray(&a_misc);
 					uiMovie->CreateArray(&a_junk);
 					uiMovie->CreateArray(&a_mods);
-					for (auto& form : a_map)
+					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format("[{:08X}]", form.first);
-						auto misc = RE::TESForm::GetFormByID(form.first)->As<RE::TESObjectMISC>();
-						if (misc)
+						auto textFormID = fmt::format("[{:08X}]", entry.first);
+						if (auto form = RE::TESForm::GetFormByID(entry.first); form)
 						{
-							RE::Scaleform::GFx::Value listEntry;
-							uiMovie->CreateObject(&listEntry);
-							listEntry.SetMember("text", form.second.data());
-							listEntry.SetMember("textFormID", textFormID.data());
-							listEntry.SetMember("FormID", form.first);
+							if (auto misc = form->As<RE::TESObjectMISC>(); misc)
+							{
+								RE::Scaleform::GFx::Value listEntry;
+								uiMovie->CreateObject(&listEntry);
+								listEntry.SetMember("text", entry.second.data());
+								listEntry.SetMember("textFormID", textFormID.data());
+								listEntry.SetMember("FormID", entry.first);
 
-							if (misc->componentData && misc->componentData->size() > 0)
-							{
-								a_junk.PushBack(listEntry);
-							}
-							else if (misc->IsLooseMod())
-							{
-								a_mods.PushBack(listEntry);
-							}
-							else
-							{
-								a_misc.PushBack(listEntry);
+								if (misc->componentData && misc->componentData->size() > 0)
+								{
+									a_junk.PushBack(listEntry);
+								}
+								else if (misc->IsLooseMod())
+								{
+									a_mods.PushBack(listEntry);
+								}
+								else
+								{
+									a_misc.PushBack(listEntry);
+								}
 							}
 						}
 					}
