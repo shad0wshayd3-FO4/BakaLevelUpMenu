@@ -2,7 +2,9 @@
 
 #include "Menus/ContainerMenu/BarterMenu.h"
 #include "Menus/ContainerMenu/ContainerMenu.h"
+#include "Menus/ContainerMenu/ContainerMenuBase.h"
 #include "Menus/HUDMenuEx/HUDMenuEx.h"
+#include "Menus/InventoryUserUIUtils/InventoryUserUIUtils.h"
 #include "Menus/LevelUpMenu/LevelUpMenu.h"
 #include "Menus/PipboyMenu/PipboyManager.h"
 #include "Menus/PluginExplorerMenu/PluginExplorerMenu.h"
@@ -12,8 +14,10 @@ namespace Menus
 {
 	void InstallHooks()
 	{
-		// BarterMenu::Install();
+		BarterMenu::Install();
 		ContainerMenu::Install();
+		ContainerMenuBase::Install();
+		InventoryUserUIUtils::Install();
 		LevelUpMenu::Install();
 		PipboyManager::Install();
 	}

@@ -4,27 +4,33 @@
 
 namespace Menus
 {
-	class TakeAllCallback :
-		public RE::IMessageBoxCallback
+	namespace
 	{
-	public:
-		TakeAllCallback(RE::ContainerMenu* a_menu) :
-			menu(a_menu)
-		{}
-
-		// override
-		virtual void operator()(std::uint8_t a_buttonIdx)
+		class TakeAllCallback :
+			public RE::IMessageBoxCallback
 		{
-			if (a_buttonIdx == 0)
-			{
-				menu->TakeAllItems();
-			}
-			menu->SetMessageBoxMode(false);
-		}
+		public:
+			TakeAllCallback(RE::ContainerMenu* a_menu) :
+				menu(a_menu)
+			{}
 
-		// members
-		RE::ContainerMenu* menu{ nullptr };
-	};
+			// override
+			virtual void operator()(std::uint8_t a_buttonIdx)
+			{
+				if (a_buttonIdx == 0)
+				{
+					menu->TakeAllItems();
+				}
+				menu->SetMessageBoxMode(false);
+			}
+
+			// members
+			RE::ContainerMenu* menu{ nullptr };
+		};
+
+		inline REL::Relocation<RE::SettingT<RE::GameSettingCollection>*> sConfirmContainerTakeAll{ REL::ID(1418009) };
+		inline REL::Relocation<RE::SettingT<RE::INISettingCollection>*> uConfirmContainerTakeAllMinimumItems{ REL::ID(122882) };
+	}
 
 	class ContainerMenu
 	{
@@ -35,18 +41,13 @@ namespace Menus
 			REL::Relocation<std::uintptr_t> targetDTOR{ REL::ID(1473839), 0x65 };
 			REL::Relocation<std::uintptr_t> targetVTBL_0{ RE::ContainerMenu::VTABLE[0] };
 			REL::Relocation<std::uintptr_t> targetVTBL_1{ RE::ContainerMenu::VTABLE[1] };
-			REL::Relocation<std::uintptr_t> targetPopulateObj{ REL::ID(969445), 0x53 };
-			REL::Relocation<std::uintptr_t> targetPopulateItm{ REL::ID(969445), 0x5E };
 
 			auto& trampoline = F4SE::GetTrampoline();
 			_ContainerMenu__CTOR = trampoline.write_call<5>(targetCTOR.address(), ContainerMenu__CTOR);
 			_ContainerMenu__DTOR = trampoline.write_branch<5>(targetDTOR.address(), ContainerMenu__DTOR);
 			_ContainerMenu__Call = targetVTBL_0.write_vfunc(0x01, reinterpret_cast<std::uintptr_t>(ContainerMenu__Call));
-			_ContainerMenu__MapCodeObjectFunctions = targetVTBL_0.write_vfunc(0x02, reinterpret_cast<std::uintptr_t>(ContainerMenu__MapCodeObjectFunctions));
 			_ContainerMenu__OnButtonEventRelease = targetVTBL_0.write_vfunc(0x0F, reinterpret_cast<std::uintptr_t>(ContainerMenu__OnButtonEventRelease));
 			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(ContainerMenu__HandleEvent));
-			trampoline.write_call<5>(targetPopulateObj.address(), InventoryUserUIUtils__PopulateMenuObj);
-			trampoline.write_call<5>(targetPopulateItm.address(), InventoryUserUIUtils__PopulateItemCardInfo);
 		}
 
 		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
@@ -71,20 +72,17 @@ namespace Menus
 				}
 			}
 
-			auto Interface3D = RE::Interface3D::Renderer::GetByName("Container3D"sv);
-			if (Interface3D)
+			if (auto Interface3D = RE::Interface3D::Renderer::GetByName("Container3D"sv); Interface3D)
 			{
 				Interface3D->postFX = RE::Interface3D::PostEffect::kNone;
 			}
 
-			auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
-			if (UIMessageQueue)
+			if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton(); UIMessageQueue)
 			{
 				UIMessageQueue->AddMessage("VignetteMenu"sv, RE::UI_MESSAGE_TYPE::kHide);
 			}
 
-			auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource();
-			if (CanDisplayNextHUDMessage)
+			if (auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource(); CanDisplayNextHUDMessage)
 			{
 				CanDisplayNextHUDMessage->Notify(false);
 			}
@@ -99,8 +97,7 @@ namespace Menus
 			CategoryBarBackground_mc.release();
 			CategoryBar_mc.release();
 
-			auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource();
-			if (CanDisplayNextHUDMessage)
+			if (auto CanDisplayNextHUDMessage = RE::CanDisplayNextHUDMessage::GetEventSource(); CanDisplayNextHUDMessage)
 			{
 				CanDisplayNextHUDMessage->Notify(true);
 			}
@@ -169,25 +166,25 @@ namespace Menus
 
 						switch (a_this->playerItemSorter.currentSort[currentTab].get())
 						{
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kAlphabetical:
+							case Utils::SORT_ON_FIELD::kAlphabetical:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kDamage:
+							case Utils::SORT_ON_FIELD::kDamage:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_DMG");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kRateOfFire:
+							case Utils::SORT_ON_FIELD::kRateOfFire:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_ROF");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kRange:
+							case Utils::SORT_ON_FIELD::kRange:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_RNG");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kAccuracy:
+							case Utils::SORT_ON_FIELD::kAccuracy:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_ACC");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kValue:
+							case Utils::SORT_ON_FIELD::kValue:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_VAL");
 								break;
-							case RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD::kWeight:
+							case Utils::SORT_ON_FIELD::kWeight:
 								a_this->menuObj.SetMember("sortButtonLabel"sv, "$SORT_WT");
 								break;
 							default:
@@ -206,8 +203,8 @@ namespace Menus
 
 						if (a_params.args[1].GetBoolean())
 						{
-							ContainerMenuBase__ItemSorter__IncrementSort(&a_this->containerItemSorter);
-							ContainerMenuBase__ItemSorter__IncrementSort(&a_this->playerItemSorter);
+							Utils::ContainerMenuBase__IncrementSort(&a_this->containerItemSorter);
+							Utils::ContainerMenuBase__IncrementSort(&a_this->playerItemSorter);
 						}
 
 						a_this->UpdateList(true);
@@ -220,12 +217,6 @@ namespace Menus
 					_ContainerMenu__Call(a_this, a_params);
 					break;
 			}
-		}
-
-		static void ContainerMenu__MapCodeObjectFunctions(RE::ContainerMenuBase* a_this)
-		{
-			_ContainerMenu__MapCodeObjectFunctions(a_this);
-			// a_this->MapCodeMethodToASFunction("", 18);
 		}
 
 		static void ContainerMenu__HandleEvent(RE::BSInputEventUser* a_this, const RE::ButtonEvent* a_event)
@@ -303,88 +294,9 @@ namespace Menus
 			return true;
 		}
 
-		static void ContainerMenuBase__ItemSorter__IncrementSort(RE::ContainerMenuBase::ItemSorter* a_this)
-		{
-			using SORT_ON_FIELD = RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD;
-			auto GetNextSort = [](SORT_ON_FIELD a_current, std::vector<SORT_ON_FIELD> a_valid)
-			{
-				auto iter = std::find(a_valid.begin(), a_valid.end(), a_current);
-				return (std::next(iter) == a_valid.end()) ? a_valid.front() : *std::next(iter);
-			};
-
-			auto currentTab = a_this->currentTab;
-			switch (currentTab)
-			{
-				case 1:	 // Weapons
-					a_this->currentSort[currentTab] =
-						GetNextSort(
-							a_this->currentSort[currentTab].get(),
-							{ SORT_ON_FIELD::kAlphabetical,
-							  SORT_ON_FIELD::kDamage,
-							  SORT_ON_FIELD::kRateOfFire,
-							  SORT_ON_FIELD::kRange,
-							  SORT_ON_FIELD::kAccuracy,
-							  SORT_ON_FIELD::kValue,
-							  SORT_ON_FIELD::kWeight });
-					break;
-
-				case 2:	 // Apparel
-					a_this->currentSort[currentTab] =
-						GetNextSort(
-							a_this->currentSort[currentTab].get(),
-							{ SORT_ON_FIELD::kAlphabetical,
-							  SORT_ON_FIELD::kDamage,
-							  SORT_ON_FIELD::kValue,
-							  SORT_ON_FIELD::kWeight });
-					break;
-
-				default:  // Other
-					a_this->currentSort[currentTab] =
-						GetNextSort(
-							a_this->currentSort[currentTab].get(),
-							{ SORT_ON_FIELD::kAlphabetical,
-							  SORT_ON_FIELD::kValue,
-							  SORT_ON_FIELD::kWeight });
-					break;
-			}
-		}
-
-		static void InventoryUserUIUtils__PopulateMenuObj(RE::ObjectRefHandle a_inventoryRef, const RE::InventoryUserUIInterfaceEntry& a_entry, RE::Scaleform::GFx::Value& a_menuObj)
-		{
-			auto BGSInventoryInterface = RE::BGSInventoryInterface::GetSingleton();
-			if (BGSInventoryInterface)
-			{
-				auto item = BGSInventoryInterface->RequestInventoryItem(a_entry.invHandle.id);
-				if (item)
-				{
-					auto iidd = Utils::InventoryItemDisplayDataEx(a_inventoryRef, a_entry);
-					iidd.PopulateFlashObject(a_menuObj);
-				}
-			}
-		}
-
-		static void InventoryUserUIUtils__PopulateItemCardInfo(const RE::InventoryUserUIInterfaceEntry& a_entry, RE::Scaleform::GFx::Value& a_menuObj)
-		{
-			auto BGSInventoryInterface = RE::BGSInventoryInterface::GetSingleton();
-			if (BGSInventoryInterface)
-			{
-				auto item = BGSInventoryInterface->RequestInventoryItem(a_entry.invHandle.id);
-				if (item && item->object)
-				{
-					RE::UIUtils::ComparisonItems comparisonItems;
-					RE::UIUtils::GetComparisonItems(item->object, comparisonItems);
-					Utils::PopulateItemCardInfo(a_menuObj, *item, a_entry.stackIndex[0], comparisonItems, false);
-				}
-			}
-		}
-
 		static inline REL::Relocation<decltype(ContainerMenu__CTOR)> _ContainerMenu__CTOR;
 		static inline REL::Relocation<decltype(ContainerMenu__DTOR)> _ContainerMenu__DTOR;
 		static inline REL::Relocation<decltype(ContainerMenu__Call)> _ContainerMenu__Call;
-		static inline REL::Relocation<decltype(ContainerMenu__MapCodeObjectFunctions)> _ContainerMenu__MapCodeObjectFunctions;
 		static inline REL::Relocation<decltype(ContainerMenu__OnButtonEventRelease)> _ContainerMenu__OnButtonEventRelease;
-
-		static inline REL::Relocation<RE::SettingT<RE::GameSettingCollection>*> sConfirmContainerTakeAll{ REL::ID(1418009) };
-		static inline REL::Relocation<RE::SettingT<RE::INISettingCollection>*> uConfirmContainerTakeAllMinimumItems{ REL::ID(122882) };
 	};
 }
