@@ -2,7 +2,9 @@ set(SOURCES
 	src/Forms/Forms.h
 	src/Menus/ContainerMenu/BarterMenu.h
 	src/Menus/ContainerMenu/ContainerMenu.h
+	src/Menus/ContainerMenu/ContainerMenuBase.h
 	src/Menus/HUDMenuEx/HUDMenuEx.h
+	src/Menus/InventoryUserUIUtils/InventoryUserUIUtils.h
 	src/Menus/LevelUpMenu/LevelUpMenu.h
 	src/Menus/LevelUpMenu/PerkManager.h
 	src/Menus/Menus.h
@@ -12,6 +14,7 @@ set(SOURCES
 	src/Menus/Scaleform/Log.h
 	src/Menus/Utils/InventoryItemDisplayData/InventoryItemDisplayData.h
 	src/Menus/Utils/ItemCard/ItemCard.h
+	src/Menus/Utils/ItemSorter/ItemSorter.h
 	src/Menus/Utils/Utils.h
 	src/PCH.cpp
 	src/PCH.h

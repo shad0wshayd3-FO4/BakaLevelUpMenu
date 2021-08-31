@@ -6,12 +6,10 @@
   "license": "MIT",
   "dependencies": [
     "autotoml",
-    "boost-iostreams",
-    "boost-iterator",
-    "boost-predef",
     "boost-stl-interfaces",
+    "fmt",
+    "mmio",
     "spdlog",
-    "tomlplusplus",
     "xbyak"
   ]
 }
