@@ -21,18 +21,28 @@ private:
 	public:
 		BakaScaleformLog()
 		{
-			// Create log
-			auto logPath = logger::log_directory();
-			*logPath /= "BakaScaleform.log"sv;
-			auto logSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logPath->string(), true);
-			fileLog = std::make_shared<spdlog::logger>("scaleform_log"s, std::move(logSink));
+#ifndef NDEBUG
+			auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
+#else
+			auto path = logger::log_directory();
+			if (!path)
+			{
+				stl::report_and_fail("Failed to find standard logging directory"sv);
+			}
 
-			// Set log traits
-			fileLog->set_pattern("%v"s);
-			fileLog->flush_on(spdlog::level::debug);
+			*path /= "BakaScaleform.log"sv;
+			auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
+#endif
+
+			log = std::make_shared<spdlog::logger>("scaleform log"s, std::move(sink));
+			log->set_level(spdlog::level::trace);
+			log->flush_on(spdlog::level::trace);
+
+			spdlog::set_default_logger(std::move(log));
+			spdlog::set_pattern("[%m/%d/%Y - %T] [%^%l%$] %v"s);
 
 			// Initial message
-			fileLog->info("BakaScaleform log opened."sv);
+			log->info("BakaScaleform log opened."sv);
 			logger::info("BakaScaleform log opened."sv);
 		}
 
@@ -42,16 +52,15 @@ private:
 			vsnprintf(buffer.data(), buffer.size(), a_fmt, a_argList);
 
 			std::string formatted{ buffer.data() };
-			formatted.erase(
-				std::remove_if(formatted.end() - 1, formatted.end(), [](const char x)
-							   { return (x == '\n'); }),
-				formatted.end());
+			formatted.erase(std::remove_if(formatted.end() - 1, formatted.end(), [](const char x)
+										   { return (x == '\n'); }),
+							formatted.end());
 
-			fileLog->info(formatted.data());
+			log->info(formatted.data());
 		}
 
 	private:
-		std::shared_ptr<spdlog::logger> fileLog;
+		std::shared_ptr<spdlog::logger> log;
 	};
 
 	static inline BakaScaleformLog bakaScaleformLog;

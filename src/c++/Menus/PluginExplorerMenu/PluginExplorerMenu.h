@@ -20,10 +20,10 @@ namespace Menus
 				RE::UI_MENU_FLAGS::kUsesBlurredBackground,
 				RE::UI_MENU_FLAGS::kUsesMovementToDirection);
 
-			depthPriority = 9;
+			depthPriority.set(RE::UI_DEPTH_PRIORITY::kTerminal);
 
 			const auto ScaleformManager = RE::BSScaleformManager::GetSingleton();
-			const auto LoadMovieSuccess =
+			[[maybe_unused]] const auto LoadMovieSuccess =
 				ScaleformManager->LoadMovieEx(*this, "Interface/PluginExplorerMenu.swf", "root.Menu_mc");
 			assert(LoadMovieSuccess);
 

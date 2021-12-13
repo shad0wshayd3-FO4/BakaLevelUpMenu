@@ -6,57 +6,91 @@ namespace Menus
 {
 	namespace
 	{
-		class TakeAllCallback :
+		class ConfirmTradeCallback :
 			public RE::IMessageBoxCallback
 		{
 		public:
-			TakeAllCallback(RE::ContainerMenu* a_menu) :
+			ConfirmTradeCallback(RE::BarterMenu* a_menu) :
 				menu(a_menu)
 			{}
 
 			// override
-			virtual void operator()(std::uint8_t a_buttonIdx)
+			virtual void operator()(std::uint8_t a_buttonIdx) override
 			{
 				if (a_buttonIdx == 0)
 				{
-					menu->TakeAllItems();
+					menu->CompleteTrade();
 				}
 				menu->SetMessageBoxMode(false);
+				menu->confirmingTrade = false;
 			}
 
 			// members
-			RE::ContainerMenu* menu{ nullptr };
+			RE::BarterMenu* menu{ nullptr };
 		};
 
-		inline REL::Relocation<RE::SettingT<RE::GameSettingCollection>*> sConfirmContainerTakeAll{ REL::ID(1418009) };
-		inline REL::Relocation<RE::SettingT<RE::INISettingCollection>*> uConfirmContainerTakeAllMinimumItems{ REL::ID(122882) };
+		class CancelTradeCallback :
+			public RE::IMessageBoxCallback
+		{
+		public:
+			CancelTradeCallback(RE::BarterMenu* a_menu, bool a_closeMenu = false) :
+				menu(a_menu), closeMenu(a_closeMenu)
+			{}
+
+			// override
+			virtual void operator()(std::uint8_t a_buttonIdx) override
+			{
+				if (a_buttonIdx == 0)
+				{
+					if (closeMenu)
+					{
+						if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton(); UIMessageQueue)
+						{
+							UIMessageQueue->AddMessage(
+								"BarterMenu",
+								RE::UI_MESSAGE_TYPE::kHide);
+						}
+					}
+					else
+					{
+						menu->ClearTradingData();
+					}
+				}
+				menu->SetMessageBoxMode(false);
+				menu->confirmingTrade = false;
+			}
+
+			// members
+			RE::BarterMenu* menu{ nullptr };
+			bool closeMenu{ false };
+		};
 	}
 
-	class ContainerMenu
+	class BarterMenu
 	{
 	public:
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> targetCTOR{ REL::ID(782822), 0x19 };
-			REL::Relocation<std::uintptr_t> targetDTOR{ REL::ID(1473839), 0x65 };
-			REL::Relocation<std::uintptr_t> targetVTBL_0{ RE::ContainerMenu::VTABLE[0] };
-			REL::Relocation<std::uintptr_t> targetVTBL_1{ RE::ContainerMenu::VTABLE[1] };
+			REL::Relocation<std::uintptr_t> targetCTOR{ REL::ID(901312), 0x34 };
+			REL::Relocation<std::uintptr_t> targetDTOR{ REL::ID(1405609), 0x10F };
+			REL::Relocation<std::uintptr_t> targetVTBL_0{ RE::BarterMenu::VTABLE[0] };
+			REL::Relocation<std::uintptr_t> targetVTBL_1{ RE::BarterMenu::VTABLE[1] };
 
 			auto& trampoline = F4SE::GetTrampoline();
-			_ContainerMenu__CTOR = trampoline.write_call<5>(targetCTOR.address(), ContainerMenu__CTOR);
-			_ContainerMenu__DTOR = trampoline.write_branch<5>(targetDTOR.address(), ContainerMenu__DTOR);
-			_ContainerMenu__Call = targetVTBL_0.write_vfunc(0x01, reinterpret_cast<std::uintptr_t>(ContainerMenu__Call));
-			_ContainerMenu__OnButtonEventRelease = targetVTBL_0.write_vfunc(0x0F, reinterpret_cast<std::uintptr_t>(ContainerMenu__OnButtonEventRelease));
-			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(ContainerMenu__HandleEvent));
+			_BarterMenu__CTOR = trampoline.write_call<5>(targetCTOR.address(), BarterMenu__CTOR);
+			_BarterMenu__DTOR = trampoline.write_branch<5>(targetDTOR.address(), BarterMenu__DTOR);
+			_BarterMenu__Call = targetVTBL_0.write_vfunc(0x01, reinterpret_cast<std::uintptr_t>(BarterMenu__Call));
+			_BarterMenu__OnButtonEventRelease = targetVTBL_0.write_vfunc(0x0F, reinterpret_cast<std::uintptr_t>(BarterMenu__OnButtonEventRelease));
+			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(BarterMenu__HandleEvent));
 		}
 
 		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
 		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBarBackground_mc;
 
 	private:
-		static RE::ContainerMenuBase* ContainerMenu__CTOR(RE::ContainerMenuBase* a_this, const char* a_movieName)
+		static RE::ContainerMenuBase* BarterMenu__CTOR(RE::ContainerMenuBase* a_this, const char* a_movieName)
 		{
-			_ContainerMenu__CTOR(a_this, a_movieName);
+			_BarterMenu__CTOR(a_this, a_movieName);
 
 			CategoryBar_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*a_this->filterHolder, "Menu_mc.CategoryBar_mc");
 			if (CategoryBar_mc)
@@ -74,7 +108,7 @@ namespace Menus
 
 			if (auto Interface3D = RE::Interface3D::Renderer::GetByName("Container3D"sv); Interface3D)
 			{
-				Interface3D->postFX = RE::Interface3D::PostEffect::kNone;
+				Interface3D->postfx = RE::Interface3D::PostEffect::kNone;
 			}
 
 			if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton(); UIMessageQueue)
@@ -90,9 +124,9 @@ namespace Menus
 			return a_this;
 		}
 
-		static void ContainerMenu__DTOR(RE::ContainerMenuBase* a_this)
+		static void BarterMenu__DTOR(RE::ContainerMenuBase* a_this)
 		{
-			_ContainerMenu__DTOR(a_this);
+			_BarterMenu__DTOR(a_this);
 
 			CategoryBarBackground_mc.release();
 			CategoryBar_mc.release();
@@ -103,7 +137,7 @@ namespace Menus
 			}
 		}
 
-		static void ContainerMenu__Call(RE::ContainerMenu* a_this, const RE::Scaleform::GFx::FunctionHandler::Params& a_params)
+		static void BarterMenu__Call(RE::BarterMenu* a_this, const RE::Scaleform::GFx::FunctionHandler::Params& a_params)
 		{
 			switch (reinterpret_cast<std::uint64_t>(a_params.userData))
 			{
@@ -116,42 +150,34 @@ namespace Menus
 							break;
 						}
 
-						_ContainerMenu__Call(a_this, a_params);
+						_BarterMenu__Call(a_this, a_params);
 					}
 					break;
 
 				case 4:	 // ExitMenu
 					{
-						auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
-						if (UIMessageQueue)
+						if (a_this->barteredItems.size() > 0)
 						{
-							UIMessageQueue->AddMessage(
-								"ContainerMenu",
-								RE::UI_MESSAGE_TYPE::kHide);
-						}
-					}
-					break;
-
-				case 5:	 // TakeAllItems
-					{
-						if (a_this->containerInv.stackedEntries.size() < uConfirmContainerTakeAllMinimumItems->GetUInt())
-						{
-							a_this->TakeAllItems();
-						}
-						else
-						{
-							auto MessageMenuManager = RE::MessageMenuManager::GetSingleton();
-							if (MessageMenuManager)
+							if (auto MessageMenuManager = RE::MessageMenuManager::GetSingleton(); MessageMenuManager)
 							{
-								auto mbCallback = new TakeAllCallback(a_this);
+								auto mbCallback = new CancelTradeCallback(a_this, true);
 								MessageMenuManager->Create(
 									"",
-									sConfirmContainerTakeAll->GetString().data(),
+									"$CancelTradeInProgress",
 									mbCallback,
 									RE::WARNING_TYPES::kInGameMessage,
 									"$OK",
 									"$Cancel");
 								a_this->SetMessageBoxMode(true);
+							}
+						}
+						else
+						{
+							if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton(); UIMessageQueue)
+							{
+								UIMessageQueue->AddMessage(
+									"BarterMenu",
+									RE::UI_MESSAGE_TYPE::kHide);
 							}
 						}
 					}
@@ -213,15 +239,77 @@ namespace Menus
 					}
 					break;
 
+				case 18:  // TradeAccept
+					{
+						RE::Scaleform::GFx::Value isValidTrade;
+						a_this->menuObj.GetMember("isValidTrade", &isValidTrade);
+
+						if (isValidTrade.GetBoolean())
+						{
+							a_this->confirmingTrade = true;
+
+							auto PlayerCaps = a_this->GetCapsOwedByPlayer();
+							auto BarterCaps =
+								a_this->containerRef.get()
+									? a_this->containerRef.get()->GetGoldAmount()
+									: static_cast<std::int64_t>(0);
+
+							auto mbMessage =
+								(PlayerCaps >= 0 || BarterCaps >= -PlayerCaps)
+									? "$ConfirmTrade"
+									: "$VendorCapsTooLow";
+
+							if (auto MessageMenuManager = RE::MessageMenuManager::GetSingleton(); MessageMenuManager)
+							{
+								auto mbCallback = new ConfirmTradeCallback(a_this);
+								MessageMenuManager->Create(
+									"",
+									mbMessage,
+									mbCallback,
+									RE::WARNING_TYPES::kInGameMessage,
+									"$OK",
+									"$Cancel");
+								a_this->SetMessageBoxMode(true);
+							}
+						}
+					}
+					break;
+
+				case 19:  // TradeReset
+					{
+						if (a_this->barteredItems.size() > 0)
+						{
+							if (auto MessageMenuManager = RE::MessageMenuManager::GetSingleton(); MessageMenuManager)
+							{
+								auto mbCallback = new CancelTradeCallback(a_this);
+								MessageMenuManager->Create(
+									"",
+									"$CancelTradeInProgress",
+									mbCallback,
+									RE::WARNING_TYPES::kInGameMessage,
+									"$OK",
+									"$Cancel");
+								a_this->SetMessageBoxMode(true);
+							}
+						}
+					}
+					break;
+
+#ifdef _DEBUG
+				case 99:  // PauseForDebugging
+					logger::debug("Breakpoint!");
+					break;
+#endif
+
 				default:
-					_ContainerMenu__Call(a_this, a_params);
+					_BarterMenu__Call(a_this, a_params);
 					break;
 			}
 		}
 
-		static void ContainerMenu__HandleEvent(RE::BSInputEventUser* a_this, const RE::ButtonEvent* a_event)
+		static void BarterMenu__HandleEvent(RE::BSInputEventUser* a_this, const RE::ButtonEvent* a_event)
 		{
-			auto menu = RE::fallout_cast<RE::ContainerMenu*>(a_this);
+			auto menu = RE::fallout_cast<RE::BarterMenu*>(a_this);
 			if (menu && menu->menuObj.IsObject() && menu->menuObj.HasMember("ProcessUserEvent"))
 			{
 				if (!a_event->disabled && menu->inputEventHandlingEnabled)
@@ -270,12 +358,17 @@ namespace Menus
 
 						case RE::BS_BUTTON_CODE::kR:
 						case RE::BS_BUTTON_CODE::kXButton:
-							args[0] = "TakeAll";
+							args[0] = "TradeAccept";
 							break;
 
 						case RE::BS_BUTTON_CODE::kT:
 						case RE::BS_BUTTON_CODE::kYButton:
-							args[0] = "Equip";
+							args[0] = "TradeReset";
+							break;
+
+						case RE::BS_BUTTON_CODE::kV:
+						case RE::BS_BUTTON_CODE::kSelect:
+							args[0] = "Invest";
 							break;
 
 						case RE::BS_BUTTON_CODE::kX:
@@ -289,14 +382,14 @@ namespace Menus
 			}
 		}
 
-		static bool ContainerMenu__OnButtonEventRelease([[maybe_unused]] RE::ContainerMenu* a_this, [[maybe_unused]] const RE::BSFixedString& a_eventName)
+		static bool BarterMenu__OnButtonEventRelease([[maybe_unused]] RE::BarterMenu* a_this, [[maybe_unused]] const RE::BSFixedString& a_eventName)
 		{
 			return true;
 		}
 
-		static inline REL::Relocation<decltype(ContainerMenu__CTOR)> _ContainerMenu__CTOR;
-		static inline REL::Relocation<decltype(ContainerMenu__DTOR)> _ContainerMenu__DTOR;
-		static inline REL::Relocation<decltype(ContainerMenu__Call)> _ContainerMenu__Call;
-		static inline REL::Relocation<decltype(ContainerMenu__OnButtonEventRelease)> _ContainerMenu__OnButtonEventRelease;
+		static inline REL::Relocation<decltype(BarterMenu__CTOR)> _BarterMenu__CTOR;
+		static inline REL::Relocation<decltype(BarterMenu__DTOR)> _BarterMenu__DTOR;
+		static inline REL::Relocation<decltype(BarterMenu__Call)> _BarterMenu__Call;
+		static inline REL::Relocation<decltype(BarterMenu__OnButtonEventRelease)> _BarterMenu__OnButtonEventRelease;
 	};
 }

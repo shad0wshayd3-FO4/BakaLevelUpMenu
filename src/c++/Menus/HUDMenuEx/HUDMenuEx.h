@@ -10,13 +10,11 @@ namespace Menus
 		{
 			menuFlags.set(RE::UI_MENU_FLAGS::kCustomRendering);
 			inputEventHandlingEnabled = false;
-			depthPriority = 6;
 
 			const auto ScaleformManager = RE::BSScaleformManager::GetSingleton();
-			const auto success =
+			[[maybe_unused]] const auto LoadMovieSuccess =
 				ScaleformManager->LoadMovieEx(*this, "Interface/HUDMenuEx.swf", "root", RE::Scaleform::GFx::Movie::ScaleModeType::kNoScale);
-
-			assert(success);
+			assert(LoadMovieSuccess);
 
 			FusionCoreMeter_mc = RE::msvc::make_unique<RE::BSGFxShaderFXTarget>(*uiMovie, "root.FusionCoreMeter_mc");
 			if (FusionCoreMeter_mc)

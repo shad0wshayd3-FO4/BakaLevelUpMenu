@@ -1,23 +1,23 @@
-set(SOURCES
-	src/Forms/Forms.h
-	src/Menus/ContainerMenu/BarterMenu.h
-	src/Menus/ContainerMenu/ContainerMenu.h
-	src/Menus/ContainerMenu/ContainerMenuBase.h
-	src/Menus/HUDMenuEx/HUDMenuEx.h
-	src/Menus/InventoryUserUIUtils/InventoryUserUIUtils.h
-	src/Menus/LevelUpMenu/LevelUpMenu.h
-	src/Menus/LevelUpMenu/PerkManager.h
-	src/Menus/Menus.h
-	src/Menus/PipboyMenu/PipboyManager.h
-	src/Menus/PluginExplorerMenu/PluginExplorer.h
-	src/Menus/PluginExplorerMenu/PluginExplorerMenu.h
-	src/Menus/Scaleform/Log.h
-	src/Menus/Utils/InventoryItemDisplayData/InventoryItemDisplayData.h
-	src/Menus/Utils/ItemCard/ItemCard.h
-	src/Menus/Utils/ItemSorter/ItemSorter.h
-	src/Menus/Utils/Utils.h
-	src/PCH.cpp
-	src/PCH.h
-	src/Settings.h
-	src/main.cpp
+set(SOURCE_FILES
+	${ROOT_DIR}/src/c++/Forms/Forms.h
+	${ROOT_DIR}/src/c++/Menus/ContainerMenu/BarterMenu.h
+	${ROOT_DIR}/src/c++/Menus/ContainerMenu/ContainerMenu.h
+	${ROOT_DIR}/src/c++/Menus/ContainerMenu/ContainerMenuBase.h
+	${ROOT_DIR}/src/c++/Menus/HUDMenuEx/HUDMenuEx.h
+	${ROOT_DIR}/src/c++/Menus/InventoryUserUIUtils/InventoryUserUIUtils.h
+	${ROOT_DIR}/src/c++/Menus/LevelUpMenu/LevelUpMenu.h
+	${ROOT_DIR}/src/c++/Menus/LevelUpMenu/PerkManager.h
+	${ROOT_DIR}/src/c++/Menus/Menus.h
+	${ROOT_DIR}/src/c++/Menus/PipboyMenu/PipboyManager.h
+	${ROOT_DIR}/src/c++/Menus/PluginExplorerMenu/PluginExplorer.h
+	${ROOT_DIR}/src/c++/Menus/PluginExplorerMenu/PluginExplorerMenu.h
+	${ROOT_DIR}/src/c++/Menus/Scaleform/Log.h
+	${ROOT_DIR}/src/c++/Menus/Utils/InventoryItemDisplayData/InventoryItemDisplayData.h
+	${ROOT_DIR}/src/c++/Menus/Utils/ItemCard/ItemCard.h
+	${ROOT_DIR}/src/c++/Menus/Utils/ItemSorter/ItemSorter.h
+	${ROOT_DIR}/src/c++/Menus/Utils/Utils.h
+	${ROOT_DIR}/src/c++/PCH.cpp
+	${ROOT_DIR}/src/c++/PCH.h
+	${ROOT_DIR}/src/c++/Settings.h
+	${ROOT_DIR}/src/c++/main.cpp
 )
