@@ -105,7 +105,6 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* a_F
 	}
 
 	Forms::InstallHooks();
-
 	Menus::InstallHooks();
 
 	logger::info("Plugin loaded successfully."sv);

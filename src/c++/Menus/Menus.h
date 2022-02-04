@@ -20,6 +20,7 @@ namespace Menus
 		InventoryUserUIUtils::Install();
 		LevelUpMenu::Install();
 		PipboyManager::Install();
+		Scaleform::Log::Install();
 	}
 
 	void Register()
@@ -30,6 +31,6 @@ namespace Menus
 			UI->RegisterMenu("PluginExplorerMenu", Menus::PluginExplorerMenu::Create);
 		}
 
-		Scaleform::Register();
+		Scaleform::Log::Register();
 	}
 }
