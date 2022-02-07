@@ -257,7 +257,8 @@ namespace Menus
 			if (auto PlayerCharacter = RE::PlayerCharacter::GetSingleton(); PlayerCharacter)
 			{
 				auto level = PlayerCharacter->GetLevel();
-				HeaderText = IsNewLevel ? fmt::format(Forms::sBakaLevelUpText.GetString(), level) : Forms::sBakaPerkMenu.GetString();
+				HeaderText = IsNewLevel ? fmt::format(fmt::runtime(Forms::sBakaLevelUpText.GetString()), level)
+										: Forms::sBakaPerkMenu.GetString();
 				IsNewLevel = false;
 
 				RE::Scaleform::GFx::Value Header[1];

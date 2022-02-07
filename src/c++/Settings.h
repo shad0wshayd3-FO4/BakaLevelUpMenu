@@ -11,7 +11,7 @@ public:
 		try
 		{
 			const auto table = toml::parse_file(
-				fmt::format(FMT_STRING("Data/F4SE/Plugins/{}.toml"), Plugin::NAME));
+				fmt::format(FMT_STRING("Data/F4SE/Plugins/{}.toml"sv), Plugin::NAME));
 			for (const auto& setting : ISetting::get_settings())
 			{
 				setting->load(table);
@@ -24,7 +24,7 @@ public:
 				<< "Error parsing file \'" << *e.source().path << "\':\n"
 				<< '\t' << e.description() << '\n'
 				<< "\t\t(" << e.source().begin << ')';
-			logger::error(ss.str());
+			logger::error(FMT_STRING("{}"sv), ss.str());
 			stl::report_and_fail("Failed to load settings."sv);
 		}
 		catch (const std::exception& e)

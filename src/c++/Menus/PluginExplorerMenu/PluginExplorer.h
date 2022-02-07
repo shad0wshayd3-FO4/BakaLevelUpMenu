@@ -67,7 +67,8 @@ namespace Menus
 						}
 					default:
 						{
-							logger::warn(FMT_STRING("ModInfo::Add - Unhandled FormType: {:d}"), a_form->GetFormType());
+							logger::warn(FMT_STRING("ModInfo::Add - Unhandled FormType: {:d}"sv),
+								stl::to_underlying(a_form->GetFormType()));
 							break;
 						}
 				}

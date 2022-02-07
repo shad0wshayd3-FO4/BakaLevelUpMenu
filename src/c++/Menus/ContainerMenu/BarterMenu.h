@@ -297,7 +297,7 @@ namespace Menus
 
 #ifdef _DEBUG
 				case 99:  // PauseForDebugging
-					logger::debug("Breakpoint!");
+					logger::debug("Breakpoint!"sv);
 					break;
 #endif
 

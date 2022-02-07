@@ -210,7 +210,7 @@ namespace Menus::Utils
 
 							default:
 								logger::warn(
-									FMT_STRING("Unhandled ArchetypeID {:02d} on FormID {:08X}"),
+									FMT_STRING("Unhandled ArchetypeID {:02d} on FormID {:08X}"sv),
 									item->effectSetting->data.archetype.underlying(),
 									a_magicItem->formID);
 								break;
@@ -451,7 +451,7 @@ namespace Menus::Utils
 									else
 									{
 										_ammoText = fmt::format(
-											FMT_STRING("{:d}"),
+											FMT_STRING("{:d}"sv),
 											RE::PlayerCharacter::GetSingleton()->GetInventoryObjectCount(data->ammo));
 									}
 								}
@@ -762,7 +762,7 @@ namespace Menus::Utils
 					return;
 				}
 
-				auto healthStr = fmt::format(FMT_STRING("{:.0f}/{:.0f}"), _curHealth, _maxHealth);
+				auto healthStr = fmt::format(FMT_STRING("{:.0f}/{:.0f}"sv), _curHealth, _maxHealth);
 				switch (_object->formType.get())
 				{
 					case RE::ENUM_FORM_ID::kARMO:

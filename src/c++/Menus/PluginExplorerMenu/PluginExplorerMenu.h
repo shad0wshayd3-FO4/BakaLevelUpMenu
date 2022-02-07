@@ -240,7 +240,7 @@ namespace Menus
 					uiMovie->CreateArray(&a_value);
 					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"), entry.first);
+						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"sv), entry.first);
 
 						RE::Scaleform::GFx::Value listEntry;
 						uiMovie->CreateObject(&listEntry);
@@ -258,7 +258,7 @@ namespace Menus
 					uiMovie->CreateArray(&a_mods);
 					for (auto& entry : a_map)
 					{
-						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"), entry.first);
+						auto textFormID = fmt::format(FMT_STRING("[{:08X}]"sv), entry.first);
 						if (auto form = RE::TESForm::GetFormByID(entry.first); form)
 						{
 							if (auto misc = form->As<RE::TESObjectMISC>(); misc)
@@ -297,7 +297,8 @@ namespace Menus
 				ProcessMISCs(MISC, JUNK, MODS, iter.second.GetMapMISC());
 
 				std::string pluginIndex =
-					(iter.first >= 0xFE) ? fmt::format(FMT_STRING("[FE][{:03X}]"), iter.first - 0xFE) : fmt::format(FMT_STRING("[{:02X}]"), iter.first);
+					(iter.first >= 0xFE) ? fmt::format(FMT_STRING("[FE][{:03X}]"sv), iter.first - 0xFE)
+										 : fmt::format(FMT_STRING("[{:02X}]"sv), iter.first);
 
 				RE::Scaleform::GFx::Value listEntry;
 				uiMovie->CreateObject(&listEntry);

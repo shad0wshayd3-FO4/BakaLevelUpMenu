@@ -32,37 +32,37 @@ namespace Menus
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
 									_conditionText = fmt::format(
-										Forms::sBakaEqual.GetString(),
+										fmt::runtime(Forms::sBakaEqual.GetString()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
 									_conditionText = fmt::format(
-										Forms::sBakaNotEqual.GetString(),
+										fmt::runtime(Forms::sBakaNotEqual.GetString()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
 									_conditionText = fmt::format(
-										Forms::sBakaGreater.GetString(),
+										fmt::runtime(Forms::sBakaGreater.GetString()),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
 									_conditionText = fmt::format(
-										Forms::sBakaGreaterEqual.GetString(),
+										fmt::runtime(Forms::sBakaGreaterEqual.GetString()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThan:
 									_conditionText = fmt::format(
-										Forms::sBakaLess.GetString(),
+										fmt::runtime(Forms::sBakaLess.GetString()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
 									_conditionText = fmt::format(
-										Forms::sBakaLessEqual.GetString(),
+										fmt::runtime(Forms::sBakaLessEqual.GetString()),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
@@ -106,10 +106,10 @@ namespace Menus
 							switch (a_condition->data.condition)
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
-									_conditionText = fmt::format(Forms::sBakaHasPerk.GetString(), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Forms::sBakaHasPerk.GetString()), perk->GetFullName());
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-									_conditionText = fmt::format(Forms::sBakaNotPerk.GetString(), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Forms::sBakaNotPerk.GetString()), perk->GetFullName());
 									break;
 								default:
 									_isValid = false;
@@ -255,8 +255,8 @@ namespace Menus
 
 				auto refrLevel = RE::PlayerCharacter::GetSingleton()->GetLevel();
 
-				std::string levelText = fmt::format(Forms::sBakaLevel.GetString(), _perkLevel);
-				std::string ranksText = fmt::format(Forms::sBakaRanks.GetString(), _perk->data.numRanks);
+				std::string levelText = fmt::format(fmt::runtime(Forms::sBakaLevel.GetString()), _perkLevel);
+				std::string ranksText = fmt::format(fmt::runtime(Forms::sBakaRanks.GetString()), _perk->data.numRanks);
 				if (refrLevel < _perkLevel)
 				{
 					levelText = ErrorTag(levelText);
@@ -270,18 +270,18 @@ namespace Menus
 						levelText = "--";
 					}
 
-					std::string reqsText = fmt::format(Forms::sBakaReqs.GetString(), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Forms::sBakaReqs.GetString()), levelText);
 					_conditionText = fmt::format(
-						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"),
+						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,
 						ranksText,
 						GetDescription());
 				}
 				else
 				{
-					std::string reqsText = fmt::format(Forms::sBakaReqs.GetString(), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Forms::sBakaReqs.GetString()), levelText);
 					_conditionText = fmt::format(
-						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"),
+						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,
 						perkConditions.GetConditionText(),
 						ranksText,
@@ -368,7 +368,7 @@ namespace Menus
 				auto IsValidPath = [](auto a_path)
 				{
 					RE::BSTSmartPointer<RE::BSResource::Stream> stream{ nullptr };
-					auto relativePath = fmt::format(FMT_STRING("Interface\\{:s}"), a_path);
+					auto relativePath = fmt::format(FMT_STRING("Interface\\{:s}"sv), a_path);
 					return (RE::BSResource::GetOrCreateStream(relativePath.c_str(), stream) == RE::BSResource::ErrorCode::kNone);
 				};
 
@@ -380,7 +380,7 @@ namespace Menus
 						continue;
 					}
 
-					auto formattedPath = fmt::format(FMT_STRING("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"), _perkChain[i]->formID);
+					auto formattedPath = fmt::format(FMT_STRING("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"sv), _perkChain[i]->formID);
 					if (IsValidPath(formattedPath))
 					{
 						_perkChain[i].SetPerkIcon(formattedPath);
@@ -473,7 +473,7 @@ namespace Menus
 	private:
 		static std::string ErrorTag(std::string_view a_string)
 		{
-			return fmt::format(FMT_STRING("<font color=\'#888888\'>{:s}</font>"), a_string);
+			return fmt::format(FMT_STRING("<font color=\'#888888\'>{:s}</font>"sv), a_string);
 		}
 
 		RE::BGSPerk* GetFirstPerkInChain(RE::BGSPerk* a_perk)

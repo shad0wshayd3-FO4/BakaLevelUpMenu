@@ -93,7 +93,8 @@ namespace Menus::Utils
 					break;
 
 				default:
-					logger::error(FMT_STRING("Unhandled FilterFlag type: {:04X}"), a_inventoryItem->object->GetFormType());
+					logger::error(FMT_STRING("Unhandled FilterFlag type: {:04X}"sv),
+						stl::to_underlying(a_inventoryItem->object->GetFormType()));
 					break;
 			}
 
@@ -134,7 +135,7 @@ namespace Menus::Utils
 					}
 					else
 					{
-						logger::error(FMT_STRING("[{:08X}] has size 0"), item->object->formID);
+						logger::error(FMT_STRING("[{:08X}] has size 0"sv), item->object->formID);
 					}
 				}
 			}
