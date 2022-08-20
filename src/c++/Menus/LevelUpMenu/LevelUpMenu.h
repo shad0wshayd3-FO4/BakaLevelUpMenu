@@ -258,7 +258,7 @@ namespace Menus
 			{
 				auto level = PlayerCharacter->GetLevel();
 				HeaderText = IsNewLevel ? fmt::format(fmt::runtime(Forms::sBakaLevelUpText.GetString()), level)
-										: Forms::sBakaPerkMenu.GetString();
+				                        : Forms::sBakaPerkMenu.GetString();
 				IsNewLevel = false;
 
 				RE::Scaleform::GFx::Value Header[1];
@@ -288,10 +288,10 @@ namespace Menus
 		}
 
 		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> Background_mc{ nullptr };
-		static inline std::string HeaderText;
-		static inline bool FromPipboy{ false };
-		static inline bool IsNewLevel{ false };
-		static inline bool IsLoaded{ false };
+		inline static std::string HeaderText;
+		inline static bool FromPipboy{ false };
+		inline static bool IsNewLevel{ false };
+		inline static bool IsLoaded{ false };
 
 	private:
 		static void LevelUpMenu__Init()

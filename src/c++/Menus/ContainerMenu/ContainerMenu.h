@@ -50,8 +50,8 @@ namespace Menus
 			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(ContainerMenu__HandleEvent));
 		}
 
-		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
-		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBarBackground_mc;
+		inline static RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
+		inline static RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBarBackground_mc;
 
 	private:
 		static RE::ContainerMenuBase* ContainerMenu__CTOR(RE::ContainerMenuBase* a_this, const char* a_movieName)
@@ -107,7 +107,7 @@ namespace Menus
 		{
 			switch (reinterpret_cast<std::uint64_t>(a_params.userData))
 			{
-				case 3:	 // Show3D
+				case 3:  // Show3D
 					if (a_params.argCount == 2 && a_params.args[0].IsInt() && a_params.args[1].IsBoolean())
 					{
 						if (a_params.args[0].GetInt() == -1)
@@ -120,7 +120,7 @@ namespace Menus
 					}
 					break;
 
-				case 4:	 // ExitMenu
+				case 4:  // ExitMenu
 					{
 						auto UIMessageQueue = RE::UIMessageQueue::GetSingleton();
 						if (UIMessageQueue)
@@ -132,7 +132,7 @@ namespace Menus
 					}
 					break;
 
-				case 5:	 // TakeAllItems
+				case 5:  // TakeAllItems
 					{
 						if (a_this->containerInv.stackedEntries.size() < uConfirmContainerTakeAllMinimumItems->GetUInt())
 						{
@@ -294,9 +294,9 @@ namespace Menus
 			return true;
 		}
 
-		static inline REL::Relocation<decltype(ContainerMenu__CTOR)> _ContainerMenu__CTOR;
-		static inline REL::Relocation<decltype(ContainerMenu__DTOR)> _ContainerMenu__DTOR;
-		static inline REL::Relocation<decltype(ContainerMenu__Call)> _ContainerMenu__Call;
-		static inline REL::Relocation<decltype(ContainerMenu__OnButtonEventRelease)> _ContainerMenu__OnButtonEventRelease;
+		inline static REL::Relocation<decltype(ContainerMenu__CTOR)> _ContainerMenu__CTOR;
+		inline static REL::Relocation<decltype(ContainerMenu__DTOR)> _ContainerMenu__DTOR;
+		inline static REL::Relocation<decltype(ContainerMenu__Call)> _ContainerMenu__Call;
+		inline static REL::Relocation<decltype(ContainerMenu__OnButtonEventRelease)> _ContainerMenu__OnButtonEventRelease;
 	};
 }

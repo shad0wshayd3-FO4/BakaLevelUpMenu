@@ -49,7 +49,7 @@ namespace Scaleform
 					auto msg = std::string(a_msg);
 					msg.erase(
 						std::remove_if(msg.end() - 1, msg.end(), [](const char x)
-									   { return (x == '\n'); }),
+					                   { return (x == '\n'); }),
 						msg.end());
 
 					switch (a_messageID.id)

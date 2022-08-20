@@ -33,7 +33,9 @@ namespace Menus::Utils
 				}
 
 				constexpr auto GetName() const noexcept { return _name.c_str(); }
+
 				constexpr auto GetCount() const noexcept { return _count; }
+
 				constexpr auto GetTaggedForSearch() const noexcept { return _taggedForSearch; }
 
 				void IncCount(std::uint32_t a_count)
@@ -46,6 +48,7 @@ namespace Menus::Utils
 				std::uint32_t _count{ 0 };
 				bool _taggedForSearch{ false };
 			};
+
 			using ComponentPair = std::pair<std::uint32_t, ComponentData>;
 			using ComponentList = std::vector<ComponentPair>;
 
@@ -129,9 +132,7 @@ namespace Menus::Utils
 
 					for (auto item : a_list)
 					{
-						if (!item->conditions(PlayerCharacter, PlayerCharacter) ||
-							!item->effectSetting ||
-							!item->effectSetting->data.flags.none(RE::EffectSetting::EffectSettingData::Flag::kHideInUI))
+						if (!item->conditions(PlayerCharacter, PlayerCharacter) || !item->effectSetting || !item->effectSetting->data.flags.none(RE::EffectSetting::EffectSettingData::Flag::kHideInUI))
 						{
 							continue;
 						}
@@ -283,8 +284,8 @@ namespace Menus::Utils
 								{
 									auto formID = iter.first->formID;
 									if (auto idx = std::find_if(_componentList.begin(), _componentList.end(), [&](IC::ComponentPair& a_idx)
-																{ return a_idx.first == formID; });
-										idx != _componentList.end())
+									                            { return a_idx.first == formID; });
+									    idx != _componentList.end())
 									{
 										idx->second.IncCount(iter.second.i);
 									}
@@ -611,7 +612,9 @@ namespace Menus::Utils
 				RE::UIUtils::ComparisonItems& a_comparisonItems,
 				bool a_forceArmorComparison = false) :
 				ItemCardInfo(a_item, a_stackID),
-				_movie(a_movie), _itemCardInfoList(a_itemCardInfoList), _forceArmorComparison(a_forceArmorComparison)
+				_movie(a_movie),
+				_itemCardInfoList(a_itemCardInfoList),
+				_forceArmorComparison(a_forceArmorComparison)
 			{
 				for (auto iter : a_comparisonItems)
 				{

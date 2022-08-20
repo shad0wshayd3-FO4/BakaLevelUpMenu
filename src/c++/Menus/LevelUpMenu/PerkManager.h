@@ -128,9 +128,13 @@ namespace Menus
 			}
 
 			constexpr std::string_view GetConditionText() const noexcept { return { _conditionText.data(), _conditionText.size() }; }
+
 			constexpr bool IsOr() const noexcept { return _isOr; }
+
 			constexpr bool IsTrue() const noexcept { return _isTrue; }
+
 			constexpr bool IsBlank() const noexcept { return _isBlank; }
+
 			constexpr bool IsValid() const noexcept { return _isValid; }
 
 		private:
@@ -205,8 +209,11 @@ namespace Menus
 			}
 
 			constexpr std::string_view GetConditionText() const noexcept { return { _conditionText.data(), _conditionText.size() }; }
+
 			constexpr bool IsEmpty() const noexcept { return _isEmpty; }
+
 			constexpr bool IsValid() const noexcept { return _isValid; }
+
 			constexpr bool IsAvailable() const noexcept { return _isAvailable; }
 
 		private:
@@ -235,12 +242,19 @@ namespace Menus
 			}
 
 			constexpr std::string_view GetName() const noexcept { return { _name.data(), _name.size() }; }
+
 			constexpr std::string_view GetConditionText() const noexcept { return { _conditionText.data(), _conditionText.size() }; }
+
 			constexpr std::string_view GetDescription() const noexcept { return { _description.data(), _description.size() }; }
+
 			constexpr std::string_view GetPerkIcon() const noexcept { return { _perkIcon.data(), _perkIcon.size() }; }
+
 			constexpr RE::BGSPerk* GetPerk() const noexcept { return _perk; }
+
 			constexpr bool IsValid() const noexcept { return _isValid; }
+
 			constexpr bool IsAvailable() const noexcept { return _isAvailable; }
+
 			constexpr std::int8_t GetPerkLevel() const noexcept { return _perkLevel; }
 
 			void SetPerkIcon(std::string_view a_path) noexcept { _perkIcon = a_path; }
@@ -335,7 +349,7 @@ namespace Menus
 				{
 					auto curPerk = _perkChain[i];
 					auto curRank = RE::PlayerCharacter::GetSingleton()
-									   ->GetPerkRank(curPerk.GetPerk());
+					                   ->GetPerkRank(curPerk.GetPerk());
 
 					if (!curPerk.IsValid())
 					{

@@ -74,13 +74,21 @@ namespace Menus
 			}
 
 			[[nodiscard]] std::string_view GetName() const noexcept { return name; }
+
 			[[nodiscard]] FormMap GetMapALCH() const noexcept { return mapALCH; }
+
 			[[nodiscard]] FormMap GetMapAMMO() const noexcept { return mapAMMO; }
+
 			[[nodiscard]] FormMap GetMapARMO() const noexcept { return mapARMO; }
+
 			[[nodiscard]] FormMap GetMapBOOK() const noexcept { return mapBOOK; }
+
 			[[nodiscard]] FormMap GetMapHOLO() const noexcept { return mapHOLO; }
+
 			[[nodiscard]] FormMap GetMapKEYS() const noexcept { return mapKEYS; }
+
 			[[nodiscard]] FormMap GetMapMISC() const noexcept { return mapMISC; }
+
 			[[nodiscard]] FormMap GetMapWEAP() const noexcept { return mapWEAP; }
 
 			[[nodiscard]] std::uint64_t GetCount() const noexcept
@@ -181,8 +189,8 @@ namespace Menus
 			}
 		}
 
-		static inline std::map<std::uint32_t, PluginInfo> modMap;
-		static inline std::map<std::uint32_t, std::uint32_t> idxMap;
-		static inline PluginList pluginList;
+		inline static std::map<std::uint32_t, PluginInfo> modMap;
+		inline static std::map<std::uint32_t, std::uint32_t> idxMap;
+		inline static PluginList pluginList;
 	};
 }

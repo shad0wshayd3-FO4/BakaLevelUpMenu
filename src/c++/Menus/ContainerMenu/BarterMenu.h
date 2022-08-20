@@ -84,8 +84,8 @@ namespace Menus
 			targetVTBL_1.write_vfunc(0x08, reinterpret_cast<std::uintptr_t>(BarterMenu__HandleEvent));
 		}
 
-		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
-		static inline RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBarBackground_mc;
+		inline static RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBar_mc;
+		inline static RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> CategoryBarBackground_mc;
 
 	private:
 		static RE::ContainerMenuBase* BarterMenu__CTOR(RE::ContainerMenuBase* a_this, const char* a_movieName)
@@ -141,7 +141,7 @@ namespace Menus
 		{
 			switch (reinterpret_cast<std::uint64_t>(a_params.userData))
 			{
-				case 3:	 // Show3D
+				case 3:  // Show3D
 					if (a_params.argCount == 2 && a_params.args[0].IsInt() && a_params.args[1].IsBoolean())
 					{
 						if (a_params.args[0].GetInt() == -1)
@@ -154,7 +154,7 @@ namespace Menus
 					}
 					break;
 
-				case 4:	 // ExitMenu
+				case 4:  // ExitMenu
 					{
 						if (a_this->barteredItems.size() > 0)
 						{
@@ -387,9 +387,9 @@ namespace Menus
 			return true;
 		}
 
-		static inline REL::Relocation<decltype(BarterMenu__CTOR)> _BarterMenu__CTOR;
-		static inline REL::Relocation<decltype(BarterMenu__DTOR)> _BarterMenu__DTOR;
-		static inline REL::Relocation<decltype(BarterMenu__Call)> _BarterMenu__Call;
-		static inline REL::Relocation<decltype(BarterMenu__OnButtonEventRelease)> _BarterMenu__OnButtonEventRelease;
+		inline static REL::Relocation<decltype(BarterMenu__CTOR)> _BarterMenu__CTOR;
+		inline static REL::Relocation<decltype(BarterMenu__DTOR)> _BarterMenu__DTOR;
+		inline static REL::Relocation<decltype(BarterMenu__Call)> _BarterMenu__Call;
+		inline static REL::Relocation<decltype(BarterMenu__OnButtonEventRelease)> _BarterMenu__OnButtonEventRelease;
 	};
 }

@@ -3,6 +3,7 @@
 namespace Menus::Utils
 {
 	using SORT_ON_FIELD = RE::ContainerMenuBase::ItemSorter::SORT_ON_FIELD;
+
 	namespace detail
 	{
 		SORT_ON_FIELD GetNextSort(SORT_ON_FIELD a_current, std::vector<SORT_ON_FIELD> a_valid)
@@ -17,27 +18,27 @@ namespace Menus::Utils
 		auto currentTab = a_this->currentTab;
 		switch (currentTab)
 		{
-			case 1:	 // Weapons
+			case 1:  // Weapons
 				a_this->currentSort[currentTab] =
 					detail::GetNextSort(
 						a_this->currentSort[currentTab].get(),
 						{ SORT_ON_FIELD::kAlphabetical,
-						  SORT_ON_FIELD::kDamage,
-						  SORT_ON_FIELD::kRateOfFire,
-						  SORT_ON_FIELD::kRange,
-						  SORT_ON_FIELD::kAccuracy,
-						  SORT_ON_FIELD::kValue,
-						  SORT_ON_FIELD::kWeight });
+				          SORT_ON_FIELD::kDamage,
+				          SORT_ON_FIELD::kRateOfFire,
+				          SORT_ON_FIELD::kRange,
+				          SORT_ON_FIELD::kAccuracy,
+				          SORT_ON_FIELD::kValue,
+				          SORT_ON_FIELD::kWeight });
 				break;
 
-			case 2:	 // Apparel
+			case 2:  // Apparel
 				a_this->currentSort[currentTab] =
 					detail::GetNextSort(
 						a_this->currentSort[currentTab].get(),
 						{ SORT_ON_FIELD::kAlphabetical,
-						  SORT_ON_FIELD::kDamage,
-						  SORT_ON_FIELD::kValue,
-						  SORT_ON_FIELD::kWeight });
+				          SORT_ON_FIELD::kDamage,
+				          SORT_ON_FIELD::kValue,
+				          SORT_ON_FIELD::kWeight });
 				break;
 
 			default:  // Other
@@ -45,8 +46,8 @@ namespace Menus::Utils
 					detail::GetNextSort(
 						a_this->currentSort[currentTab].get(),
 						{ SORT_ON_FIELD::kAlphabetical,
-						  SORT_ON_FIELD::kValue,
-						  SORT_ON_FIELD::kWeight });
+				          SORT_ON_FIELD::kValue,
+				          SORT_ON_FIELD::kWeight });
 				break;
 		}
 	}

@@ -137,7 +137,7 @@ namespace Menus
 					{
 						case RE::BS_BUTTON_CODE::kTab:
 						case RE::BS_BUTTON_CODE::kBButton:
-							args[0] = a_event->QUserEvent() != "NextFocus" ? "Cancel" : "DISABLED";	 // dumb workaround
+							args[0] = a_event->QUserEvent() != "NextFocus" ? "Cancel" : "DISABLED";  // dumb workaround
 							break;
 
 						case RE::BS_BUTTON_CODE::kEnter:
@@ -323,6 +323,6 @@ namespace Menus
 		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> LPaneBackground_mc{ nullptr };
 		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> RPaneBackground_mc{ nullptr };
 		RE::msvc::unique_ptr<RE::BSGFxShaderFXTarget> TPaneBackground_mc{ nullptr };
-		static inline bool IsLoaded{ false };
+		inline static bool IsLoaded{ false };
 	};
 }
