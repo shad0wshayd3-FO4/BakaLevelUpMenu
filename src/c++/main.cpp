@@ -27,7 +27,7 @@ namespace
 		logger::info(FMT_STRING("{:s} v{:s}"sv), Version::PROJECT, Version::NAME);
 	}
 
-void MessageHandler(F4SE::MessagingInterface::Message* a_msg)
+	void MessageHandler(F4SE::MessagingInterface::Message* a_msg)
 	{
 		if (!a_msg)
 		{
