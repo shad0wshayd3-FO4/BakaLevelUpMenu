@@ -33,37 +33,37 @@ namespace Menus
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Equal),
+										fmt::runtime(Translations::Formatting::Equal.data()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::NotEqual),
+										fmt::runtime(Translations::Formatting::NotEqual.data()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Greater),
+										fmt::runtime(Translations::Formatting::Greater.data()),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::GreaterEqual),
+										fmt::runtime(Translations::Formatting::GreaterEqual.data()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThan:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Less),
+										fmt::runtime(Translations::Formatting::Less.data()),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::LessEqual),
+										fmt::runtime(Translations::Formatting::LessEqual.data()),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
@@ -107,10 +107,10 @@ namespace Menus
 							switch (a_condition->data.condition)
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
-									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk.data()), perk->GetFullName());
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk.data()), perk->GetFullName());
 									break;
 								default:
 									_isValid = false;
@@ -270,8 +270,8 @@ namespace Menus
 
 				auto refrLevel = RE::PlayerCharacter::GetSingleton()->GetLevel();
 
-				std::string levelText = fmt::format(fmt::runtime(Translations::Formatting::Level), _perkLevel);
-				std::string ranksText = fmt::format(fmt::runtime(Translations::Formatting::Ranks), _perk->data.numRanks);
+				std::string levelText = fmt::format(fmt::runtime(Translations::Formatting::Level.data()), _perkLevel);
+				std::string ranksText = fmt::format(fmt::runtime(Translations::Formatting::Ranks.data()), _perk->data.numRanks);
 				if (refrLevel < _perkLevel)
 				{
 					levelText = ErrorTag(levelText);
@@ -285,7 +285,7 @@ namespace Menus
 						levelText = "--";
 					}
 
-					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs.data()), levelText);
 					_conditionText = fmt::format(
 						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,
@@ -294,7 +294,7 @@ namespace Menus
 				}
 				else
 				{
-					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs.data()), levelText);
 					_conditionText = fmt::format(
 						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,

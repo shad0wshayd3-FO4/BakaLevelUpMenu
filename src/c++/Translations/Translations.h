@@ -5,24 +5,22 @@ namespace Translations
 	class Formatting
 	{
 	public:
-		inline static std::string Equal;
-		inline static std::string Greater;
-		inline static std::string GreaterEqual;
-		inline static std::string HasPerk;
-		inline static std::string Less;
-		inline static std::string LessEqual;
-		inline static std::string Level;
-		inline static std::string LevelUpText;
-		inline static std::string NotEqual;
-		inline static std::string NotPerk;
-		inline static std::string PerkMenu;
-		inline static std::string Ranks;
-		inline static std::string Reqs;
-
-		inline static bool m_RunOnce{ true };
+		inline static std::string Equal{ "{:s} is exactly {:0.0F}" };
+		inline static std::string Greater{ "{:s} {:0.0F}" };
+		inline static std::string GreaterEqual{ "{:s} {:0.0F}" };
+		inline static std::string HasPerk{ "has {:s} perk" };
+		inline static std::string Less{ "{:s} &lt; {:0.0F}" };
+		inline static std::string LessEqual{ "{:s} &lt; {:0.0F}" };
+		inline static std::string Level{ "Level {:d}" };
+		inline static std::string LevelUpText{ "Welcome to Level {:d}" };
+		inline static std::string NotEqual{ "{:s} is not {:0.0F}" };
+		inline static std::string NotPerk{ "does not have {:s} perk" };
+		inline static std::string PerkMenu{ "Perk Menu" };
+		inline static std::string Ranks{ "Ranks: {:d}" };
+		inline static std::string Reqs{ "Reqs: {:s}" };
 	};
 
-	static void GetTranslationStrings()
+	inline static void GetTranslationStrings()
 	{
 		if (auto BSScaleformManager = RE::BSScaleformManager::GetSingleton(); BSScaleformManager && BSScaleformManager->loader)
 		{

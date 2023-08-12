@@ -26,6 +26,27 @@ namespace
 
 		logger::info(FMT_STRING("{:s} v{:s}"sv), Version::PROJECT, Version::NAME);
 	}
+
+void MessageHandler(F4SE::MessagingInterface::Message* a_msg)
+	{
+		if (!a_msg)
+		{
+			return;
+		}
+
+		switch (a_msg->type)
+		{
+			case F4SE::MessagingInterface::kGameDataReady:
+				if (static_cast<bool>(a_msg->data))
+				{
+					Translations::GetTranslationStrings();
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
 extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a_F4SE, F4SE::PluginInfo* a_info)
@@ -57,6 +78,13 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* a_F
 
 	F4SE::Init(a_F4SE);
 	F4SE::AllocTrampoline(1 << 7);
+
+	const auto messaging = F4SE::GetMessagingInterface();
+	if (!messaging || !messaging->RegisterListener(MessageHandler))
+	{
+		logger::critical("Failed to get F4SE messaging interface, marking as incompatible."sv);
+		return false;
+	}
 
 	Menus::LevelUpMenu::Install();
 

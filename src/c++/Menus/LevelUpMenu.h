@@ -20,12 +20,6 @@ namespace Menus
 
 		LevelUpMenu()
 		{
-			if (Translations::Formatting::m_RunOnce)
-			{
-				Translations::Formatting::m_RunOnce = false;
-				Translations::GetTranslationStrings();
-			}
-
 			menuFlags.set(
 				RE::UI_MENU_FLAGS::kPausesGame,
 				RE::UI_MENU_FLAGS::kUsesCursor,
@@ -266,8 +260,8 @@ namespace Menus
 			if (auto PlayerCharacter = RE::PlayerCharacter::GetSingleton())
 			{
 				auto level = PlayerCharacter->GetLevel();
-				HeaderText = IsNewLevel ? fmt::format(fmt::runtime(Translations::Formatting::LevelUpText), level)
-				                        : Translations::Formatting::PerkMenu;
+				HeaderText = IsNewLevel ? fmt::format(fmt::runtime(Translations::Formatting::LevelUpText.data()), level)
+				                        : Translations::Formatting::PerkMenu.data();
 				IsNewLevel = false;
 
 				RE::Scaleform::GFx::Value Header[1];
@@ -389,7 +383,7 @@ namespace Menus
 			}
 
 		private:
-			static void Trigger(void*)
+			static void Trigger()
 			{
 				LevelUpMenu::IsNewLevel = true;
 				*bShouldPlayLevelUpSound = true;
