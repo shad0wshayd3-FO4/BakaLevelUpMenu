@@ -1,5 +1,6 @@
 #pragma once
-#include "Forms/Forms.h"
+
+#include "Translations/Translations.h"
 
 namespace Menus
 {
@@ -32,37 +33,37 @@ namespace Menus
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaEqual.GetString()),
+										fmt::runtime(Translations::Formatting::Equal),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaNotEqual.GetString()),
+										fmt::runtime(Translations::Formatting::NotEqual),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaGreater.GetString()),
+										fmt::runtime(Translations::Formatting::Greater),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaGreaterEqual.GetString()),
+										fmt::runtime(Translations::Formatting::GreaterEqual),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThan:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaLess.GetString()),
+										fmt::runtime(Translations::Formatting::Less),
 										actorValue->GetFullName(),
 										compareValue);
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
 									_conditionText = fmt::format(
-										fmt::runtime(Forms::sBakaLessEqual.GetString()),
+										fmt::runtime(Translations::Formatting::LessEqual),
 										actorValue->GetFullName(),
 										compareValue + 1.0F);
 									break;
@@ -106,10 +107,10 @@ namespace Menus
 							switch (a_condition->data.condition)
 							{
 								case RE::ENUM_COMPARISON_CONDITION::kEqual:
-									_conditionText = fmt::format(fmt::runtime(Forms::sBakaHasPerk.GetString()), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk), perk->GetFullName());
 									break;
 								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-									_conditionText = fmt::format(fmt::runtime(Forms::sBakaNotPerk.GetString()), perk->GetFullName());
+									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk), perk->GetFullName());
 									break;
 								default:
 									_isValid = false;
@@ -150,7 +151,7 @@ namespace Menus
 		public:
 			PerkConditions(RE::BGSPerk* a_perk)
 			{
-				if (auto condition = a_perk->perkConditions.head; condition)
+				if (auto condition = a_perk->perkConditions.head)
 				{
 					do
 					{
@@ -175,7 +176,7 @@ namespace Menus
 				std::stringstream ss;
 				for (auto i = 0; i < _conditions.size();)
 				{
-					auto condition = _conditions[i];
+					auto& condition = _conditions[i];
 					if (condition.IsBlank())
 					{
 						i++;
@@ -269,8 +270,8 @@ namespace Menus
 
 				auto refrLevel = RE::PlayerCharacter::GetSingleton()->GetLevel();
 
-				std::string levelText = fmt::format(fmt::runtime(Forms::sBakaLevel.GetString()), _perkLevel);
-				std::string ranksText = fmt::format(fmt::runtime(Forms::sBakaRanks.GetString()), _perk->data.numRanks);
+				std::string levelText = fmt::format(fmt::runtime(Translations::Formatting::Level), _perkLevel);
+				std::string ranksText = fmt::format(fmt::runtime(Translations::Formatting::Ranks), _perk->data.numRanks);
 				if (refrLevel < _perkLevel)
 				{
 					levelText = ErrorTag(levelText);
@@ -284,7 +285,7 @@ namespace Menus
 						levelText = "--";
 					}
 
-					std::string reqsText = fmt::format(fmt::runtime(Forms::sBakaReqs.GetString()), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs), levelText);
 					_conditionText = fmt::format(
 						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,
@@ -293,7 +294,7 @@ namespace Menus
 				}
 				else
 				{
-					std::string reqsText = fmt::format(fmt::runtime(Forms::sBakaReqs.GetString()), levelText);
+					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs), levelText);
 					_conditionText = fmt::format(
 						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"sv),
 						reqsText,
@@ -347,7 +348,7 @@ namespace Menus
 			{
 				for (std::int8_t i = 0; i < _perkChain.size(); i++)
 				{
-					auto curPerk = _perkChain[i];
+					auto& curPerk = _perkChain[i];
 					auto curRank = RE::PlayerCharacter::GetSingleton()
 					                   ->GetPerkRank(curPerk.GetPerk());
 
@@ -379,7 +380,7 @@ namespace Menus
 
 			void SetPerkIcons()
 			{
-				auto IsValidPath = [](auto a_path)
+				auto IsValidPath = [](const std::string& a_path)
 				{
 					RE::BSTSmartPointer<RE::BSResource::Stream> stream{ nullptr };
 					auto relativePath = fmt::format(FMT_STRING("Interface\\{:s}"sv), a_path);
@@ -388,7 +389,7 @@ namespace Menus
 
 				for (auto i = 0; i < _perkChain.size(); i++)
 				{
-					if (IsValidPath(_perkChain[i]->swfFile))
+					if (IsValidPath(_perkChain[i]->swfFile.c_str()))
 					{
 						_perkChain[i].SetPerkIcon(_perkChain[i]->swfFile);
 						continue;

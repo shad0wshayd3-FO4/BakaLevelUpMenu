@@ -4,6 +4,3 @@
 [submodule "extern/BethesdaCMakeModules"]
 	path = extern/BethesdaCMakeModules
 	url = https://github.com/shad0wshayd3/BethesdaCMakeModules.git
-[submodule "extern/BakaInterface-Scaleform"]
-	path = extern/BakaInterface-Scaleform
-	url = https://github.com/shad0wshayd3/BakaInterface-Scaleform.git

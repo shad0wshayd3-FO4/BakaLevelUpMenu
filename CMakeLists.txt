@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-set(NAME "BakaInterface")
+set(NAME "BakaLevelUpMenu")
 set(VERSION 2.0.0)
 
 # ---- Options ----
