@@ -320,8 +320,8 @@ namespace Menus
 			}
 
 		private:
-			using Create_t = RE::IMenu*(*)(const RE::UIMessage&);
-			using Update_t = void(*)();
+			using Create_t = RE::IMenu* (*)(const RE::UIMessage&);
+			using Update_t = void (*)();
 
 			static void RegisterMenu(
 				[[maybe_unused]] RE::UI* a_this,
@@ -335,7 +335,7 @@ namespace Menus
 			inline static REL::Relocation<decltype(&RegisterMenu)> _RegisterMenu;
 		};
 
-		template <std::uint64_t ID, std::ptrdiff_t OFF>
+		template<std::uint64_t ID, std::ptrdiff_t OFF>
 		class hkShowMenu
 		{
 		public:
