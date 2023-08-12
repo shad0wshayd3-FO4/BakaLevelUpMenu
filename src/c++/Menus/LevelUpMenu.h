@@ -13,9 +13,7 @@ namespace Menus
 		{
 			hkRegisterMenu<740126, 0x43>::InstallC();
 			hkRegisterMenu<1564767, 0x3B>::InstallJ();
-			hkShowMenu<218593, 0x02>::Install();
-			hkShowMenu<302903, 0x61>::Install();
-			hkTrigger<647274, 0xA2>::Install();
+			hkSendUIBoolMessage<1436715, 0x70>::Install();
 		}
 
 		LevelUpMenu()
@@ -330,66 +328,30 @@ namespace Menus
 		};
 
 		template<std::uint64_t ID, std::ptrdiff_t OFF>
-		class hkShowMenu
+		class hkSendUIBoolMessage
 		{
 		public:
 			static void Install()
 			{
 				static REL::Relocation<std::uintptr_t> target{ REL::ID(ID), OFF };
 				auto& trampoline = F4SE::GetTrampoline();
-				trampoline.write_branch<5>(target.address(), ShowMenu);
+				trampoline.write_call<5>(target.address(), SendUIBoolMessage);
 			}
 
 		private:
-			static void ShowMenu(bool a_fromPipboy)
+			static void SendUIBoolMessage(
+				[[maybe_unused]] const RE::BSFixedString& a_menu,
+				[[maybe_unused]] RE::UI_MESSAGE_TYPE a_type,
+				[[maybe_unused]] bool a_fromPipboy)
 			{
-				const auto UI = RE::UI::GetSingleton();
-				const auto VATS = RE::VATS::GetSingleton();
-
-				if (a_fromPipboy
-				    || ((!UI || !UI->menuMode)
-				        && (!UI || !UI->GetMenuOpen<RE::WorkshopMenu>())
-				        && (!VATS || VATS->mode == RE::VATS::VATS_MODE_ENUM::kNone)))
+				if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton())
 				{
-					if (auto UIMessageQueue = RE::UIMessageQueue::GetSingleton())
-					{
-						LevelUpMenu::FromPipboy = a_fromPipboy;
-						UIMessageQueue->AddMessage(
-							"LevelUpMenu"sv,
-							RE::UI_MESSAGE_TYPE::kShow);
-
-						if (*bShouldPlayLevelUpSound)
-						{
-							*bShouldPlayLevelUpSound = false;
-							RE::UIUtils::PlayMenuSound("MUSSpecialSuccess");
-						}
-					}
+					LevelUpMenu::FromPipboy = a_fromPipboy;
+					UIMessageQueue->AddMessage(
+						"LevelUpMenu"sv,
+						RE::UI_MESSAGE_TYPE::kShow);
 				}
 			}
-
-			inline static REL::Relocation<decltype(&ShowMenu)> _ShowMenu;
-			inline static REL::Relocation<bool*> bShouldPlayLevelUpSound{ REL::ID(682020) };
-		};
-
-		template<std::uint64_t ID, std::ptrdiff_t OFF>
-		class hkTrigger
-		{
-		public:
-			static void Install()
-			{
-				static REL::Relocation<std::uintptr_t> target{ REL::ID(ID), OFF };
-				auto& trampoline = F4SE::GetTrampoline();
-				trampoline.write_call<5>(target.address(), Trigger);
-			}
-
-		private:
-			static void Trigger()
-			{
-				LevelUpMenu::IsNewLevel = true;
-				*bShouldPlayLevelUpSound = true;
-			}
-
-			inline static REL::Relocation<bool*> bShouldPlayLevelUpSound{ REL::ID(682020) };
 		};
 	};
 }
