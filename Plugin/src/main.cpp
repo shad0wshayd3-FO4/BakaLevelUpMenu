@@ -15,8 +15,8 @@ namespace
 
 		auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 		auto lvl = *Settings::General::EnableDebugLogging
-		               ? spdlog::level::trace
-		               : spdlog::level::info;
+		             ? spdlog::level::trace
+		             : spdlog::level::info;
 
 		log->set_level(lvl);
 		log->flush_on(lvl);
@@ -36,15 +36,15 @@ namespace
 
 		switch (a_msg->type)
 		{
-			case F4SE::MessagingInterface::kGameDataReady:
-				if (static_cast<bool>(a_msg->data))
-				{
-					Translations::GetTranslationStrings();
-				}
-				break;
+		case F4SE::MessagingInterface::kGameDataReady:
+			if (static_cast<bool>(a_msg->data))
+			{
+				Translations::GetTranslationStrings();
+			}
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 	}
 }

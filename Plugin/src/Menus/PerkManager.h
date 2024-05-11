@@ -17,112 +17,112 @@ namespace Menus
 				RE::stl::enumeration functionID{ RE::SCRIPT_OUTPUT::START_OF_FUNCTION_SECTION, a_condition->data.functionData.function.get() };
 				switch (functionID.get())
 				{
-					case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
-					case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
-					case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
-						{
-							auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.functionData.param[0]);
-							if (!actorValue)
-							{
-								_isValid = false;
-								break;
-							}
-
-							auto compareValue = a_condition->GetComparisonValue();
-							switch (a_condition->data.condition)
-							{
-								case RE::ENUM_COMPARISON_CONDITION::kEqual:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Equal.data()),
-										actorValue->GetFullName(),
-										compareValue);
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::NotEqual.data()),
-										actorValue->GetFullName(),
-										compareValue);
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Greater.data()),
-										actorValue->GetFullName(),
-										compareValue + 1.0F);
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::GreaterEqual.data()),
-										actorValue->GetFullName(),
-										compareValue);
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kLessThan:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::Less.data()),
-										actorValue->GetFullName(),
-										compareValue);
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
-									_conditionText = fmt::format(
-										fmt::runtime(Translations::Formatting::LessEqual.data()),
-										actorValue->GetFullName(),
-										compareValue + 1.0F);
-									break;
-								default:
-									_isValid = false;
-									break;
-							}
-
-							_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
-							break;
-						}
-
-					case RE::SCRIPT_OUTPUT::FUNCTION_GET_IS_SEX:
-					case RE::SCRIPT_OUTPUT::FUNCTION_GET_GLOBAL_VALUE:
-						{
-							if (!a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr))
-							{
-								_isValid = false;
-							}
-
-							_isBlank = true;
-							break;
-						}
-
-					case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
-						{
-							auto perk = static_cast<RE::BGSPerk*>(a_condition->data.functionData.param[0]);
-							if (!perk)
-							{
-								_isValid = false;
-								break;
-							}
-
-							auto compareValue = a_condition->GetComparisonValue();
-							if (compareValue != 1.0F)
-							{
-								_isValid = false;
-								break;
-							}
-
-							switch (a_condition->data.condition)
-							{
-								case RE::ENUM_COMPARISON_CONDITION::kEqual:
-									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk.data()), perk->GetFullName());
-									break;
-								case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-									_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk.data()), perk->GetFullName());
-									break;
-								default:
-									_isValid = false;
-									break;
-							}
-
-							_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
-							break;
-						}
-
-					default:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_ACTOR_VALUE:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_BASE_ACTOR_VALUE:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_PERMANENT_ACTOR_VALUE:
+				{
+					auto actorValue = static_cast<RE::ActorValueInfo*>(a_condition->data.functionData.param[0]);
+					if (!actorValue)
+					{
+						_isValid = false;
 						break;
+					}
+
+					auto compareValue = a_condition->GetComparisonValue();
+					switch (a_condition->data.condition)
+					{
+					case RE::ENUM_COMPARISON_CONDITION::kEqual:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::Equal.data()),
+							actorValue->GetFullName(),
+							compareValue);
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::NotEqual.data()),
+							actorValue->GetFullName(),
+							compareValue);
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::Greater.data()),
+							actorValue->GetFullName(),
+							compareValue + 1.0F);
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::GreaterEqual.data()),
+							actorValue->GetFullName(),
+							compareValue);
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kLessThan:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::Less.data()),
+							actorValue->GetFullName(),
+							compareValue);
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
+						_conditionText = fmt::format(
+							fmt::runtime(Translations::Formatting::LessEqual.data()),
+							actorValue->GetFullName(),
+							compareValue + 1.0F);
+						break;
+					default:
+						_isValid = false;
+						break;
+					}
+
+					_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
+					break;
+				}
+
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_IS_SEX:
+				case RE::SCRIPT_OUTPUT::FUNCTION_GET_GLOBAL_VALUE:
+				{
+					if (!a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr))
+					{
+						_isValid = false;
+					}
+
+					_isBlank = true;
+					break;
+				}
+
+				case RE::SCRIPT_OUTPUT::FUNCTION_HAS_PERK:
+				{
+					auto perk = static_cast<RE::BGSPerk*>(a_condition->data.functionData.param[0]);
+					if (!perk)
+					{
+						_isValid = false;
+						break;
+					}
+
+					auto compareValue = a_condition->GetComparisonValue();
+					if (compareValue != 1.0F)
+					{
+						_isValid = false;
+						break;
+					}
+
+					switch (a_condition->data.condition)
+					{
+					case RE::ENUM_COMPARISON_CONDITION::kEqual:
+						_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk.data()), perk->GetFullName());
+						break;
+					case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
+						_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk.data()), perk->GetFullName());
+						break;
+					default:
+						_isValid = false;
+						break;
+					}
+
+					_isTrue = a_condition->IsTrue(RE::PlayerCharacter::GetSingleton(), nullptr);
+					break;
+				}
+
+				default:
+					break;
 				}
 
 				_isOr = (a_condition->next && a_condition->data.compareOr);
