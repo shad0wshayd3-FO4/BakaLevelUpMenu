@@ -27,7 +27,7 @@ namespace Menus
 				RE::UI_MENU_FLAGS::kUsesBlurredBackground,
 				RE::UI_MENU_FLAGS::kUsesMovementToDirection);
 			menuHUDMode = "SpecialMode";
-			depthPriority.set(RE::UI_DEPTH_PRIORITY::kTerminal);
+			depthPriority = RE::UI_DEPTH_PRIORITY::kTerminal;
 
 			const auto ScaleformManager = RE::BSScaleformManager::GetSingleton();
 			[[maybe_unused]] const auto LoadMovieSuccess =
@@ -255,8 +255,8 @@ namespace Menus
 			if (auto PlayerCharacter = RE::PlayerCharacter::GetSingleton())
 			{
 				auto level = PlayerCharacter->GetLevel();
-				HeaderText = IsNewLevel ? fmt::format(fmt::runtime(Translations::Formatting::LevelUpText.data()), level)
-				                        : Translations::Formatting::PerkMenu.data();
+				HeaderText = IsNewLevel ? std::vformat(Translations::Formatting::LevelUpText, std::make_format_args(level))
+				                        : Translations::Formatting::PerkMenu;
 				IsNewLevel = false;
 
 				RE::Scaleform::GFx::Value Header[1];

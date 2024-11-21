@@ -28,44 +28,41 @@ namespace Menus
 						break;
 					}
 
+					auto avName = actorValue->GetFullName();
 					auto compareValue = a_condition->GetComparisonValue();
 					switch (a_condition->data.condition)
 					{
 					case RE::ENUM_COMPARISON_CONDITION::kEqual:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::Equal.data()),
-							actorValue->GetFullName(),
-							compareValue);
+						_conditionText = std::vformat(
+							Translations::Formatting::Equal,
+							std::make_format_args(avName, compareValue));
 						break;
 					case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::NotEqual.data()),
-							actorValue->GetFullName(),
-							compareValue);
+						_conditionText = std::vformat(
+							Translations::Formatting::NotEqual,
+							std::make_format_args(avName, compareValue));
 						break;
 					case RE::ENUM_COMPARISON_CONDITION::kGreaterThan:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::Greater.data()),
-							actorValue->GetFullName(),
-							compareValue + 1.0F);
+						compareValue += 1.0f;
+						_conditionText = std::vformat(
+							Translations::Formatting::Greater,
+							std::make_format_args(avName, compareValue));
 						break;
 					case RE::ENUM_COMPARISON_CONDITION::kGreaterThanEqual:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::GreaterEqual.data()),
-							actorValue->GetFullName(),
-							compareValue);
+						_conditionText = std::vformat(
+							Translations::Formatting::GreaterEqual,
+							std::make_format_args(avName, compareValue));
 						break;
 					case RE::ENUM_COMPARISON_CONDITION::kLessThan:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::Less.data()),
-							actorValue->GetFullName(),
-							compareValue);
+						_conditionText = std::vformat(
+							Translations::Formatting::Less,
+							std::make_format_args(avName, compareValue));
 						break;
 					case RE::ENUM_COMPARISON_CONDITION::kLessThanEqual:
-						_conditionText = fmt::format(
-							fmt::runtime(Translations::Formatting::LessEqual.data()),
-							actorValue->GetFullName(),
-							compareValue + 1.0F);
+						compareValue += 1.0f;
+						_conditionText = std::vformat(
+							Translations::Formatting::LessEqual,
+							std::make_format_args(avName, compareValue));
 						break;
 					default:
 						_isValid = false;
@@ -107,11 +104,17 @@ namespace Menus
 					switch (a_condition->data.condition)
 					{
 					case RE::ENUM_COMPARISON_CONDITION::kEqual:
-						_conditionText = fmt::format(fmt::runtime(Translations::Formatting::HasPerk.data()), perk->GetFullName());
+					{
+						auto perkName = perk->GetFullName();
+						_conditionText = std::vformat(Translations::Formatting::HasPerk, std::make_format_args(perkName));
 						break;
+					}
 					case RE::ENUM_COMPARISON_CONDITION::kNotEqual:
-						_conditionText = fmt::format(fmt::runtime(Translations::Formatting::NotPerk.data()), perk->GetFullName());
+					{
+						auto perkName = perk->GetFullName();
+						_conditionText = std::vformat(Translations::Formatting::NotPerk, std::make_format_args(perkName));
 						break;
+					}
 					default:
 						_isValid = false;
 						break;
@@ -270,8 +273,8 @@ namespace Menus
 
 				auto refrLevel = RE::PlayerCharacter::GetSingleton()->GetLevel();
 
-				std::string levelText = fmt::format(fmt::runtime(Translations::Formatting::Level.data()), _perkLevel);
-				std::string ranksText = fmt::format(fmt::runtime(Translations::Formatting::Ranks.data()), _perk->data.numRanks);
+				std::string levelText = std::vformat(Translations::Formatting::Level, std::make_format_args(_perkLevel));
+				std::string ranksText = std::vformat(Translations::Formatting::Ranks, std::make_format_args(_perk->data.numRanks));
 				if (refrLevel < _perkLevel)
 				{
 					levelText = ErrorTag(levelText);
@@ -285,18 +288,18 @@ namespace Menus
 						levelText = "--";
 					}
 
-					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs.data()), levelText);
-					_conditionText = fmt::format(
-						FMT_STRING("{:s}<br>{:s}<br><br>{:s}"sv),
+					std::string reqsText = std::vformat(Translations::Formatting::Reqs, std::make_format_args(levelText));
+					_conditionText = std::format(
+						"{:s}<br>{:s}<br><br>{:s}"sv,
 						reqsText,
 						ranksText,
 						GetDescription());
 				}
 				else
 				{
-					std::string reqsText = fmt::format(fmt::runtime(Translations::Formatting::Reqs.data()), levelText);
-					_conditionText = fmt::format(
-						FMT_STRING("{:s}, {:s}<br>{:s}<br><br>{:s}"sv),
+					std::string reqsText = std::vformat(Translations::Formatting::Reqs, std::make_format_args(levelText));
+					_conditionText = std::format(
+						"{:s}, {:s}<br>{:s}<br><br>{:s}"sv,
 						reqsText,
 						perkConditions.GetConditionText(),
 						ranksText,
@@ -383,7 +386,7 @@ namespace Menus
 				auto IsValidPath = [](const std::string& a_path)
 				{
 					RE::BSTSmartPointer<RE::BSResource::Stream> stream{ nullptr };
-					auto relativePath = fmt::format(FMT_STRING("Interface\\{:s}"sv), a_path);
+					auto relativePath = std::format("Interface\\{:s}"sv, a_path);
 					return (RE::BSResource::GetOrCreateStream(relativePath.c_str(), stream) == RE::BSResource::ErrorCode::kNone);
 				};
 
@@ -395,7 +398,7 @@ namespace Menus
 						continue;
 					}
 
-					auto formattedPath = fmt::format(FMT_STRING("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"sv), _perkChain[i]->formID);
+					auto formattedPath = std::format("Components\\VaultBoys\\Perks\\PerkClip_{:x}.swf"sv, _perkChain[i]->formID);
 					if (IsValidPath(formattedPath))
 					{
 						_perkChain[i].SetPerkIcon(formattedPath);
@@ -488,7 +491,7 @@ namespace Menus
 	private:
 		static std::string ErrorTag(std::string_view a_string)
 		{
-			return fmt::format(FMT_STRING("<font color=\'#888888\'>{:s}</font>"sv), a_string);
+			return std::format("<font color=\'#888888\'>{:s}</font>"sv, a_string);
 		}
 
 		RE::BGSPerk* GetFirstPerkInChain(RE::BGSPerk* a_perk)
